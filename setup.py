@@ -23,7 +23,7 @@ setup(
     author_email="joseph.early.ai@gmail.com",
     license="MIT",
     classifiers=[
-        "Development Status :: 3 - AlphaDevelopment Status :: 3 - Alpha",
+        "Development Status :: 3 - Alpha",
         "License :: OSI Approved :: MIT License",
         "Programming Language :: Python :: 3",
     ],

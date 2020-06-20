@@ -18,7 +18,7 @@ There is an [open pull request](https://github.com/foutaise/texttable/pull/68) t
 
 ## Installation
 
-PyPi:
+[PyPi](https://pypi.org/project/texttable-latex/0.1.0/):
 
 ```
 pip install texttable-latex
@@ -127,6 +127,8 @@ Latex output:
 
 ## Meta
 
-[Joseph Early](https://www.jearly.co.uk/) – [@JosephAEarly](https://twitter.com/dbader_org) – joseph.early.ai@gmail.com
+[Joseph Early](https://www.jearly.co.uk/)  
+[@JosephAEarly](https://twitter.com/dbader_org)  
+joseph.early.ai@gmail.com
 
 Distributed under the MIT license. See ``LICENSE`` for more information.
