@@ -1,5 +1,6 @@
 # texttable-latex
-> This Python package extends the texttable package with Latex functionality.
+
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)  ![Build Status](https://github.com/JAEarly/texttable-latex/workflows/build/badge.svg)
 
 [Texttable](https://github.com/foutaise/texttable) is a Python package that can create simple ASCII tables. This package extends its functionality to allow the table to be directly output in Latex, removing the tedious copy and paste chore. The Latex output matches the table design, and there are utilities for adding table captions and labels.
 
