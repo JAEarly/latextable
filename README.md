@@ -5,7 +5,7 @@
 
 There is an [open pull request](https://github.com/foutaise/texttable/pull/68) to add these features directly to the Texttable library, but it has yet to get any attention so I've released it as its own library.
 
-![](docs/cover.png)
+![](docs/cover_cropped.png)
 
 ## Features
 - Draw a table object in a Latex format.
@@ -47,7 +47,7 @@ table.add_rows([["Name", "Age", "Nickname"],
                 ["Mr\nBaptiste\nClement", 1, "Baby"],
                 ["Mme\nLouise\nBourgeau", 28, "Lou\n \nLoue"]])
 print(table.draw() + "\n")
-print(texttable_latex.draw_latex(caption="An example table.", label="table:example_table") + "\n")
+print(texttable_latex.draw_latex(table, caption="An example table.") + "\n")
 
 table = Texttable()
 table.set_deco(Texttable.HEADER)
@@ -63,8 +63,8 @@ table.add_rows([["text",    "float", "exp", "int", "auto"],
                 ["lmn",     5e-78,   5e-78, 89.4,  .000000000000128],
                 ["opqrstu", .023,    5e+78, 92.,   12800000000000000000000]])
 print(table.draw() + "\n")
-print(texttable_latex.draw_latex(caption="Another table.", label="table:another_table") + "\n")
-print(texttable_latex.draw_latex(caption="A table with dropped columns.", label="table:dropped_column_table", drop_columns=['exp', 'int']))
+print(texttable_latex.draw_latex(table, caption="Another table.", label="table:another_table") + "\n")
+print(texttable_latex.draw_latex(table, caption="A table with dropped columns.", label="table:dropped_column_table", drop_columns=['exp', 'int']))
 ```
 
 Latex output:
@@ -126,6 +126,6 @@ Latex output:
 
 ## Meta
 
-[Joseph Early](www.jearly.co.uk) – [@JosephAEarly](https://twitter.com/dbader_org) – joseph.early.ai@gmail.com
+[Joseph Early](https://www.jearly.co.uk/) – [@JosephAEarly](https://twitter.com/dbader_org) – joseph.early.ai@gmail.com
 
 Distributed under the MIT license. See ``LICENSE`` for more information.
