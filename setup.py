@@ -10,15 +10,15 @@ README = (HERE / "README.md").read_text()
 
 # This call to setup() does all the work
 setup(
-    name="texttable-latex",
+    name="latextable",
     version="0.1.0",
-    packages=["texttable-latex"],
+    py_modules=['latextable'],
     install_requires=["texttable"],
     description="An extension to the texttable library that exports tables directly to Latex.",
     keywords="table texttable latex",
     long_description=README,
     long_description_content_type="text/markdown",
-    url="https://github.com/JAEarly/texttable-latex",
+    url="https://github.com/JAEarly/latextable",
     author="Joseph Early",
     author_email="joseph.early.ai@gmail.com",
     license="MIT",
@@ -27,6 +27,5 @@ setup(
         "License :: OSI Approved :: MIT License",
         "Programming Language :: Python :: 3",
     ],
-    test_suite="texttable.tests.test",
     include_package_data=False,
 )

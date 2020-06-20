@@ -1,10 +1,10 @@
 # latextable
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)  ![Build Status](https://github.com/JAEarly/texttable-latex/workflows/build/badge.svg)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)  ![Build Status](https://github.com/JAEarly/latextable/workflows/build/badge.svg)
 
-[Texttable](https://github.com/foutaise/texttable) is a Python package that can create simple ASCII tables. This package extends its functionality to allow the table to be directly output in Latex, removing the tedious copy and paste chore. The Latex output matches the table design, and there are utilities for adding table captions and labels.
-
-There is an [open pull request](https://github.com/foutaise/texttable/pull/68) to add these features directly to the Texttable library, but it has yet to get any attention so I've released it as its own library.
+[Texttable](https://github.com/foutaise/texttable) is a Python package that can create simple ASCII tables.
+This package extends its functionality to allow the table to be directly output in Latex, removing the tedious copy and paste chore.
+The Latex output matches the table design, and there are utilities for adding table captions and labels.
 
 ![](docs/cover_cropped.png)
 
@@ -18,10 +18,10 @@ There is an [open pull request](https://github.com/foutaise/texttable/pull/68) t
 
 ## Installation
 
-[PyPi](https://pypi.org/project/texttable-latex/0.1.0/):
+PyPi:
 
 ```
-pip install texttable-latex
+pip install latextable
 ```
 
 Requirements:
@@ -33,7 +33,6 @@ texttable
 ## Usage
 
 The single function `latextable.draw_latex` returns a formatted Latex string based on the provided table.
-Draw a Texttable table in Latex format.
 
 ```
 draw_latex(table, caption=None, label=None, drop_columns=None)
@@ -140,7 +139,7 @@ Latex output:
 ## Meta
 
 [Joseph Early](https://www.jearly.co.uk/)  
-[@JosephAEarly](https://twitter.com/dbader_org)  
+[@JosephAEarly](https://twitter.com/JosephAEarly)  
 joseph.early.ai@gmail.com
 
 Distributed under the MIT license. See ``LICENSE`` for more information.
