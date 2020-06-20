@@ -34,7 +34,7 @@ texttable
 The single function `texttable.draw_latex(table)` returns a formatted Latex string based on the provided table.
 
 ### Examples
-These examples use the existing tables provided in the docs.
+These examples use the existing tables provided in the Texttable docs.
 
 Usage:
 
