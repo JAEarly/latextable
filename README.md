@@ -1,4 +1,4 @@
-# texttable-latex
+# latextable
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)  ![Build Status](https://github.com/JAEarly/texttable-latex/workflows/build/badge.svg)
 
@@ -30,9 +30,21 @@ Requirements:
 texttable
 ```
 
-## Usage example
+## Usage
 
-The single function `texttable.draw_latex(table)` returns a formatted Latex string based on the provided table.
+The single function `latextable.draw_latex` returns a formatted Latex string based on the provided table.
+Draw a Texttable table in Latex format.
+
+```
+draw_latex(table, caption=None, label=None, drop_columns=None)
+    table: Texttable table to be rendered in Latex.
+    caption: A string that adds a caption to the Latex formatting.
+    label: A string that adds a referencing label to the Latex formatting.
+    drop_columns: A list of column names that won't be in the Latex output.
+        Each column name must be in the table header.
+
+    return: The formatted Latex table returned as a single string.
+```
 
 ### Examples
 These examples use the existing tables provided in the Texttable docs.
@@ -48,7 +60,7 @@ table.add_rows([["Name", "Age", "Nickname"],
                 ["Mr\nBaptiste\nClement", 1, "Baby"],
                 ["Mme\nLouise\nBourgeau", 28, "Lou\n \nLoue"]])
 print(table.draw() + "\n")
-print(texttable_latex.draw_latex(table, caption="An example table.") + "\n")
+print(latextable.draw_latex(table, caption="An example table.") + "\n")
 
 table = Texttable()
 table.set_deco(Texttable.HEADER)
@@ -64,8 +76,8 @@ table.add_rows([["text",    "float", "exp", "int", "auto"],
                 ["lmn",     5e-78,   5e-78, 89.4,  .000000000000128],
                 ["opqrstu", .023,    5e+78, 92.,   12800000000000000000000]])
 print(table.draw() + "\n")
-print(texttable_latex.draw_latex(table, caption="Another table.", label="table:another_table") + "\n")
-print(texttable_latex.draw_latex(table, caption="A table with dropped columns.", label="table:dropped_column_table", drop_columns=['exp', 'int']))
+print(latextable.draw_latex(table, caption="Another table.", label="table:another_table") + "\n")
+print(latextable.draw_latex(table, caption="A table with dropped columns.", label="table:dropped_column_table", drop_columns=['exp', 'int']))
 ```
 
 Latex output:

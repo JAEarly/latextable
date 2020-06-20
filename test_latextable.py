@@ -1,29 +1,29 @@
 import unittest
 
-import texttable_latex
+import latextable
 
 
-class TexttableLatexTest(unittest.TestCase):
+class LatexTableTest(unittest.TestCase):
 
     def test_clean_row(self):
         row = ["Row1\n", "Row2"]
-        cleaned = texttable_latex._clean_row(row)
+        cleaned = latextable._clean_row(row)
         self.assertEqual(cleaned[0], "Row1")
         self.assertNotIn("\n", cleaned[0])
         self.assertEqual(cleaned[1], "Row2")
 
     def test_sanitise_drop_columns(self):
         header = ["Col1", "Col2", "Col3"]
-        self.assertIsNone(texttable_latex._sanitise_drop_columns(header, ["Col1"]))
-        self.assertIsNone(texttable_latex._sanitise_drop_columns(header, ["Col1", "Col2"]))
-        self.assertRaises(texttable_latex.DropColumnError, texttable_latex._sanitise_drop_columns, header, ["Col4"])
+        self.assertIsNone(latextable._sanitise_drop_columns(header, ["Col1"]))
+        self.assertIsNone(latextable._sanitise_drop_columns(header, ["Col1", "Col2"]))
+        self.assertRaises(latextable.DropColumnError, latextable._sanitise_drop_columns, header, ["Col4"])
 
     def test_drop_columns(self):
         target = ["Row1", "Row2", "Row3"]
         header = ["Col1", "Col2", "Col3"]
-        no_drop = texttable_latex._drop_columns(target, header, [])
-        one_drop = texttable_latex._drop_columns(target, header, ['Col1'])
-        two_drop = texttable_latex._drop_columns(target, header, ['Col1', 'Col3'])
+        no_drop = latextable._drop_columns(target, header, [])
+        one_drop = latextable._drop_columns(target, header, ['Col1'])
+        two_drop = latextable._drop_columns(target, header, ['Col1', 'Col3'])
         self.assertEqual(len(no_drop), 3)
         self.assertTrue(target[0] in no_drop)
         self.assertTrue(target[1] in no_drop)
@@ -39,9 +39,9 @@ class TexttableLatexTest(unittest.TestCase):
 
     def test_indent_text(self):
         text = "test"
-        no_ident = texttable_latex._indent_text(text, 0)
-        one_ident = texttable_latex._indent_text(text, 1)
-        two_ident = texttable_latex._indent_text(text, 2)
+        no_ident = latextable._indent_text(text, 0)
+        one_ident = latextable._indent_text(text, 1)
+        two_ident = latextable._indent_text(text, 2)
         self.assertIn(text, no_ident)
         self.assertEqual(len(no_ident), len(text))
         self.assertIn(text, one_ident)

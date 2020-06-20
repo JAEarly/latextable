@@ -19,7 +19,7 @@ def draw_latex(table, caption=None, label=None, drop_columns=None):
     :param label: A string that adds a referencing label to the Latex formatting.
     :param drop_columns: A list of column names that won't be in the Latex output.
             Each column name must be in the table header.
-    :return: The formatted Latex is returned as a single string.
+    :return: The formatted Latex table returned as a single string.
     """
     _sanitise_drop_columns(table._header, drop_columns)
     out = ""
