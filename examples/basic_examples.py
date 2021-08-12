@@ -66,7 +66,7 @@ def example_4():
     # Example 4 - Booktabs
     table_4 = Texttable()
     table_4.set_cols_align(["c"] * 4)
-    table_4.set_deco(Texttable.HEADER | Texttable.VLINES | Texttable.BORDER)
+    table_4.set_deco(Texttable.HEADER | Texttable.VLINES | Texttable.BORDER | Texttable.HLINES)
     table_4.add_rows([['Rank', 'Driver', 'Country', 'Wins'],
                       ['1', 'Lewis Hamilton', 'United Kingdom', '99'],
                       ['2', 'Michael Schumacher', 'Germany', '91'],

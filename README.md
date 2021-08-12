@@ -124,6 +124,8 @@ A working example is also given in this [Colab Notebook](https://colab.research.
 
 ## Release History
 
+* 0.2.1
+    * Removed row hlines when using booktabs.
 * 0.2.0
     * Added support for booktabs and table positioning.
 * 0.1.1
