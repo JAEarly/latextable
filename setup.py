@@ -11,7 +11,7 @@ README = (HERE / "README.md").read_text()
 # This call to setup() does all the work
 setup(
     name="latextable",
-    version="0.1.1",
+    version="0.2.0",
     py_modules=['latextable'],
     install_requires=["texttable"],
     description="An extension to the texttable library that exports tables directly to Latex.",
