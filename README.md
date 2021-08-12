@@ -2,7 +2,7 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 ![Build Status](https://github.com/JAEarly/latextable/workflows/build/badge.svg)
-[![Downloads](https://pepy.tech/badge/latextable)](https://pepy.tech/project/latextable)
+[![Downloads](https://static.pepy.tech/personalized-badge/latextable?period=total&units=none&left_color=black&right_color=blue&left_text=Downloads)](https://pepy.tech/project/latextable)
 
 [Texttable](https://github.com/foutaise/texttable) is a Python package that can create simple ASCII tables.
 This package extends its functionality to allow the table to be directly output in Latex, removing the tedious copy and paste chore.
