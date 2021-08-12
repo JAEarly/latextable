@@ -10,7 +10,7 @@ class DropColumnError(Exception):
         super().__init__("Cannot drop column {:s} - column not in table header ({:s})\n".format(column, str(header)))
 
 
-def draw_latex(table, caption=None, label=None, drop_columns=None):
+def draw_latex(table, caption=None, label=None, drop_columns=None, position=None):
     """
     Draw a Texttable table in Latex format.
 
@@ -19,18 +19,20 @@ def draw_latex(table, caption=None, label=None, drop_columns=None):
     :param label: A string that adds a referencing label to the Latex formatting.
     :param drop_columns: A list of column names that won't be in the Latex output.
             Each column name must be in the table header.
+    :param position: A string that represents LaTex's float position of the table.
+			For example 'ht' results in the float position [ht].
     :return: The formatted Latex table returned as a single string.
     """
     _sanitise_drop_columns(table._header, drop_columns)
     out = ""
-    out += _draw_latex_preamble(table)
+    out += _draw_latex_preamble(table, position)
     out += _draw_latex_header(table, drop_columns)
     out += _draw_latex_content(table, drop_columns)
     out += _draw_latex_postamble(table, caption, label)
     return out
 
 
-def _draw_latex_preamble(table):
+def _draw_latex_preamble(table, position):
     """
     Draw the Latex table preamble.
 
@@ -45,7 +47,12 @@ def _draw_latex_preamble(table):
     :param table: Texttable table to be rendered in Latex.
     :return: The Latex table preamble as a single string.
     """
-    out = "\\begin{table}\n"
+    out = "\\begin{table}" 
+
+    if position is not None:
+        out += '[{}]'.format(position)
+
+    out += "\n"
     out += _indent_text("\\begin{center}\n", 1)
 
     # Column setup with/without vlines
