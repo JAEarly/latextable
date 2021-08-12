@@ -1,7 +1,6 @@
 """
 Drawing functions for outputting a Texttable table in a Latex format.
 """
-from texttable import Texttable
 
 
 class DropColumnError(Exception):
@@ -10,9 +9,10 @@ class DropColumnError(Exception):
         super().__init__("Cannot drop column {:s} - column not in table header ({:s})\n".format(column, str(header)))
 
 
-def draw_latex(table, caption=None, label=None, drop_columns=None, position=None):
+def draw_latex(table, caption=None, label=None, drop_columns=None, position=None, use_booktabs=False):
     """
     Draw a Texttable table in Latex format.
+    Aside from table, all arguments are optional.
 
     :param table: Texttable table to be rendered in Latex.
     :param caption: A string that adds a caption to the Latex formatting.
@@ -21,18 +21,23 @@ def draw_latex(table, caption=None, label=None, drop_columns=None, position=None
             Each column name must be in the table header.
     :param position: A string that represents LaTex's float position of the table.
             For example 'ht' results in the float position [ht].
+    :param use_booktabs: Whether to override the table formatting with booktabs (https://ctan.org/pkg/booktabs?lang=en).
+            If true, the texttable formatting is ignored, and instead the default booktabs style is used.
+            This overrides the border, vertical lines, and horizontal lines.
+            Note the booktabs package will need to be included in your Latex document (\\usepackage{booktabs}).
+            Defaults to false.
     :return: The formatted Latex table returned as a single string.
     """
     _sanitise_drop_columns(table._header, drop_columns)
     out = ""
-    out += _draw_latex_preamble(table, position)
-    out += _draw_latex_header(table, drop_columns)
+    out += _draw_latex_preamble(table, position, use_booktabs)
+    out += _draw_latex_header(table, drop_columns, use_booktabs)
     out += _draw_latex_content(table, drop_columns)
-    out += _draw_latex_postamble(table, caption, label)
+    out += _draw_latex_postamble(table, caption, label, use_booktabs)
     return out
 
 
-def _draw_latex_preamble(table, position):
+def _draw_latex_preamble(table, position, use_booktabs):
     """
     Draw the Latex table preamble.
 
@@ -56,13 +61,13 @@ def _draw_latex_preamble(table, position):
     out += _indent_text("\\begin{center}\n", 1)
 
     # Column setup with/without vlines
-    if table._has_vlines():
+    if table._has_vlines() and not use_booktabs:
         column_str = "|".join(table._align)
     else:
         column_str = " ".join(table._align)
 
     # Border with/without edges
-    if table._has_border():
+    if table._has_border() and not use_booktabs:
         tabular_str = "\\begin{tabular}{|" + column_str + "|}\n"
     else:
         tabular_str = "\\begin{tabular}{" + column_str + "}\n"
@@ -71,7 +76,7 @@ def _draw_latex_preamble(table, position):
     return out
 
 
-def _draw_latex_header(table, drop_columns):
+def _draw_latex_header(table, drop_columns, use_booktabs):
     """
     Draw the Latex header.
 
@@ -87,15 +92,17 @@ def _draw_latex_header(table, drop_columns):
     :return: The Latex table header as a single string.
     """
     out = ""
-    if table._has_border():
-        out += _indent_text("\\hline\n", 3)
+    if table._has_border() or use_booktabs:
+        rule = 'toprule' if use_booktabs else 'hline'
+        out += _indent_text("\\{}\n".format(rule), 3)
 
     # Drop header columns if required
     header = _drop_columns(table._header.copy(), table._header, drop_columns)
     out += _indent_text(" & ".join(header) + " \\\\\n", 3)
 
-    if table._has_header():
-        out += _indent_text("\\hline\n", 3)
+    if table._has_header() or use_booktabs:
+        rule = 'midrule' if use_booktabs else 'hline'
+        out += _indent_text("\\{}\n".format(rule), 3)
     return out
 
 
@@ -124,7 +131,7 @@ def _draw_latex_content(table, drop_columns):
     return out
 
 
-def _draw_latex_postamble(table, caption, label):
+def _draw_latex_postamble(table, caption, label, use_booktabs):
     """
     Draw the Latex table postamble.
 
@@ -145,8 +152,9 @@ def _draw_latex_postamble(table, caption, label):
     :return: The Latex table postamble as one string.
     """
     out = ""
-    if table._has_border():
-        out += _indent_text("\\hline\n", 3)
+    if table._has_border() or use_booktabs:
+        rule = 'bottomrule' if use_booktabs else 'hline'
+        out += _indent_text("\\{}\n".format(rule), 3)
     out += _indent_text("\\end{tabular}\n", 2)
     out += _indent_text("\\end{center}\n", 1)
     if caption is not None:
