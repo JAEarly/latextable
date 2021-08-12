@@ -1,7 +1,6 @@
 """
 Drawing functions for outputting a Texttable table in a Latex format.
 """
-from texttable import Texttable
 
 
 class DropColumnError(Exception):
@@ -10,27 +9,35 @@ class DropColumnError(Exception):
         super().__init__("Cannot drop column {:s} - column not in table header ({:s})\n".format(column, str(header)))
 
 
-def draw_latex(table, caption=None, label=None, drop_columns=None):
+def draw_latex(table, caption=None, label=None, drop_columns=None, position=None, use_booktabs=False):
     """
     Draw a Texttable table in Latex format.
+    Aside from table, all arguments are optional.
 
     :param table: Texttable table to be rendered in Latex.
     :param caption: A string that adds a caption to the Latex formatting.
     :param label: A string that adds a referencing label to the Latex formatting.
     :param drop_columns: A list of column names that won't be in the Latex output.
             Each column name must be in the table header.
+    :param position: A string that represents LaTex's float position of the table.
+            For example 'ht' results in the float position [ht].
+    :param use_booktabs: Whether to override the table formatting with booktabs (https://ctan.org/pkg/booktabs?lang=en).
+            If true, the texttable formatting is ignored, and instead the default booktabs style is used.
+            This overrides the border, vertical lines, and horizontal lines.
+            Note the booktabs package will need to be included in your Latex document (\\usepackage{booktabs}).
+            Defaults to false.
     :return: The formatted Latex table returned as a single string.
     """
     _sanitise_drop_columns(table._header, drop_columns)
     out = ""
-    out += _draw_latex_preamble(table)
-    out += _draw_latex_header(table, drop_columns)
+    out += _draw_latex_preamble(table, position, use_booktabs)
+    out += _draw_latex_header(table, drop_columns, use_booktabs)
     out += _draw_latex_content(table, drop_columns)
-    out += _draw_latex_postamble(table, caption, label)
+    out += _draw_latex_postamble(table, caption, label, use_booktabs)
     return out
 
 
-def _draw_latex_preamble(table):
+def _draw_latex_preamble(table, position, use_booktabs):
     """
     Draw the Latex table preamble.
 
@@ -45,17 +52,22 @@ def _draw_latex_preamble(table):
     :param table: Texttable table to be rendered in Latex.
     :return: The Latex table preamble as a single string.
     """
-    out = "\\begin{table}\n"
+    out = "\\begin{table}" 
+
+    if position is not None:
+        out += '[{}]'.format(position)
+
+    out += "\n"
     out += _indent_text("\\begin{center}\n", 1)
 
     # Column setup with/without vlines
-    if table._has_vlines():
+    if table._has_vlines() and not use_booktabs:
         column_str = "|".join(table._align)
     else:
         column_str = " ".join(table._align)
 
     # Border with/without edges
-    if table._has_border():
+    if table._has_border() and not use_booktabs:
         tabular_str = "\\begin{tabular}{|" + column_str + "|}\n"
     else:
         tabular_str = "\\begin{tabular}{" + column_str + "}\n"
@@ -64,7 +76,7 @@ def _draw_latex_preamble(table):
     return out
 
 
-def _draw_latex_header(table, drop_columns):
+def _draw_latex_header(table, drop_columns, use_booktabs):
     """
     Draw the Latex header.
 
@@ -80,15 +92,17 @@ def _draw_latex_header(table, drop_columns):
     :return: The Latex table header as a single string.
     """
     out = ""
-    if table._has_border():
-        out += _indent_text("\\hline\n", 3)
+    if table._has_border() or use_booktabs:
+        rule = 'toprule' if use_booktabs else 'hline'
+        out += _indent_text("\\{}\n".format(rule), 3)
 
     # Drop header columns if required
     header = _drop_columns(table._header.copy(), table._header, drop_columns)
     out += _indent_text(" & ".join(header) + " \\\\\n", 3)
 
-    if table._has_header():
-        out += _indent_text("\\hline\n", 3)
+    if table._has_header() or use_booktabs:
+        rule = 'midrule' if use_booktabs else 'hline'
+        out += _indent_text("\\{}\n".format(rule), 3)
     return out
 
 
@@ -117,7 +131,7 @@ def _draw_latex_content(table, drop_columns):
     return out
 
 
-def _draw_latex_postamble(table, caption, label):
+def _draw_latex_postamble(table, caption, label, use_booktabs):
     """
     Draw the Latex table postamble.
 
@@ -138,8 +152,9 @@ def _draw_latex_postamble(table, caption, label):
     :return: The Latex table postamble as one string.
     """
     out = ""
-    if table._has_border():
-        out += _indent_text("\\hline\n", 3)
+    if table._has_border() or use_booktabs:
+        rule = 'bottomrule' if use_booktabs else 'hline'
+        out += _indent_text("\\{}\n".format(rule), 3)
     out += _indent_text("\\end{tabular}\n", 2)
     out += _indent_text("\\end{center}\n", 1)
     if caption is not None:
@@ -211,29 +226,3 @@ def _indent_text(text, indent):
     :return: The indented string.
     """
     return '\t' * indent + text
-
-
-if __name__ == '__main__':
-    example_table = Texttable()
-    example_table.set_cols_align(["l", "r", "c"])
-    example_table.set_cols_valign(["t", "m", "b"])
-    example_table.add_rows([["Name", "Age", "Nickname"],
-                            ["Mr\nXavier\nHuon", 32, "Xav'"],
-                            ["Mr\nBaptiste\nClement", 1, "Baby"],
-                            ["Mme\nLouise\nBourgeau", 28, "Lou\n \nLoue"]])
-    print(example_table.draw() + "\n")
-    print(draw_latex(example_table, caption="An example table.", label="table:example_table") + "\n")
-
-    example_table = Texttable()
-    example_table.set_deco(Texttable.HEADER)
-    example_table.set_cols_dtype(['t', 'f', 'e', 'i', 'a'])
-    example_table.set_cols_align(["l", "r", "r", "r", "l"])
-    example_table.add_rows([["text",    "float", "exp", "int", "auto"],
-                    ["abcd",    "67",    654,   89,    128.001],
-                    ["efghijk", 67.5434, .654,  89.6,  12800000000000000000000.00023],
-                    ["lmn",     5e-78,   5e-78, 89.4,  .000000000000128],
-                    ["opqrstu", .023,    5e+78, 92.,   12800000000000000000000]])
-    print(example_table.draw() + "\n")
-    print(draw_latex(example_table, caption="Another table.", label="table:another_table") + "\n")
-    print(draw_latex(example_table, caption="A table with dropped columns.", label="table:dropped_column_table",
-                     drop_columns=['exp', 'int']))
