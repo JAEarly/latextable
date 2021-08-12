@@ -32,7 +32,7 @@ def draw_latex(table, caption=None, label=None, drop_columns=None, position=None
     out = ""
     out += _draw_latex_preamble(table, position, use_booktabs)
     out += _draw_latex_header(table, drop_columns, use_booktabs)
-    out += _draw_latex_content(table, drop_columns)
+    out += _draw_latex_content(table, drop_columns, use_booktabs)
     out += _draw_latex_postamble(table, caption, label, use_booktabs)
     return out
 
@@ -106,7 +106,7 @@ def _draw_latex_header(table, drop_columns, use_booktabs):
     return out
 
 
-def _draw_latex_content(table, drop_columns):
+def _draw_latex_content(table, drop_columns, use_booktabs):
     """
     Draw the Latex table content.
 
@@ -126,7 +126,7 @@ def _draw_latex_content(table, drop_columns):
         row = _drop_columns(row, table._header, drop_columns)
         clean_row = _clean_row(row)
         out += _indent_text(" & ".join(clean_row) + " \\\\\n", 3)
-        if table._has_hlines() and idx != len(table._rows) - 1:
+        if table._has_hlines() and idx != len(table._rows) - 1 and not use_booktabs:
             out += _indent_text("\\hline\n", 3)
     return out
 
