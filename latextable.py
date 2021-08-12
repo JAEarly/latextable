@@ -20,7 +20,7 @@ def draw_latex(table, caption=None, label=None, drop_columns=None, position=None
     :param drop_columns: A list of column names that won't be in the Latex output.
             Each column name must be in the table header.
     :param position: A string that represents LaTex's float position of the table.
-			For example 'ht' results in the float position [ht].
+            For example 'ht' results in the float position [ht].
     :return: The formatted Latex table returned as a single string.
     """
     _sanitise_drop_columns(table._header, drop_columns)
@@ -218,29 +218,3 @@ def _indent_text(text, indent):
     :return: The indented string.
     """
     return '\t' * indent + text
-
-
-if __name__ == '__main__':
-    example_table = Texttable()
-    example_table.set_cols_align(["l", "r", "c"])
-    example_table.set_cols_valign(["t", "m", "b"])
-    example_table.add_rows([["Name", "Age", "Nickname"],
-                            ["Mr\nXavier\nHuon", 32, "Xav'"],
-                            ["Mr\nBaptiste\nClement", 1, "Baby"],
-                            ["Mme\nLouise\nBourgeau", 28, "Lou\n \nLoue"]])
-    print(example_table.draw() + "\n")
-    print(draw_latex(example_table, caption="An example table.", label="table:example_table") + "\n")
-
-    example_table = Texttable()
-    example_table.set_deco(Texttable.HEADER)
-    example_table.set_cols_dtype(['t', 'f', 'e', 'i', 'a'])
-    example_table.set_cols_align(["l", "r", "r", "r", "l"])
-    example_table.add_rows([["text",    "float", "exp", "int", "auto"],
-                    ["abcd",    "67",    654,   89,    128.001],
-                    ["efghijk", 67.5434, .654,  89.6,  12800000000000000000000.00023],
-                    ["lmn",     5e-78,   5e-78, 89.4,  .000000000000128],
-                    ["opqrstu", .023,    5e+78, 92.,   12800000000000000000000]])
-    print(example_table.draw() + "\n")
-    print(draw_latex(example_table, caption="Another table.", label="table:another_table") + "\n")
-    print(draw_latex(example_table, caption="A table with dropped columns.", label="table:dropped_column_table",
-                     drop_columns=['exp', 'int']))
