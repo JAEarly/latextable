@@ -4,7 +4,7 @@
 
 [Texttable](https://github.com/foutaise/texttable) is a Python package that can create simple ASCII tables.
 This package extends its functionality to allow the table to be directly output in Latex, removing the tedious copy and paste chore.
-The Latex output matches the table design, and there are utilities for adding table captions and labels.
+The Latex output matches the table design, and there are utilities for adding table captions, labels, and positions.
 
 ![](docs/cover_cropped.png)
 
@@ -15,6 +15,7 @@ The Latex output matches the table design, and there are utilities for adding ta
 - Allows the user to drop certain columns from the output.
 - Provides the ability to add a caption, reference label, and position to the Latex output.
 - The output is correctly indented for directly copying into Latex.
+- Supports [booktabs](https://ctan.org/pkg/booktabs?lang=en) formatting.
 
 ## Installation
 
@@ -33,6 +34,8 @@ texttable
 ## Usage
 
 The single function `latextable.draw_latex` returns a formatted Latex string based on the provided table.
+Aside from table, all arguments are optional.
+
 
 ```
 draw_latex(table, caption=None, label=None, drop_columns=None, position=None):
@@ -43,6 +46,11 @@ draw_latex(table, caption=None, label=None, drop_columns=None, position=None):
         Each column name must be in the table header.
     position: A string that represents LaTex's float position of the table.
         For example 'ht' results in the float position [ht].
+    use_booktabs: Whether to override the table formatting with booktabs (https://ctan.org/pkg/booktabs?lang=en).
+        If true, the texttable formatting is ignored, and instead the default booktabs style is used.
+        This overrides the border, vertical lines, and horizontal lines.
+        Note the booktabs package will need to be included in your Latex document (\usepackage{booktabs}).
+        Defaults to false.
 
     return: The formatted Latex table returned as a single string.
 ```
