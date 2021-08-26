@@ -9,7 +9,7 @@ class DropColumnError(Exception):
         super().__init__("Cannot drop column {:s} - column not in table header ({:s})\n".format(column, str(header)))
 
 
-def draw_latex(table, caption=None, label=None, drop_columns=None, position=None, use_booktabs=False):
+def draw_latex(table, caption=None, label=None, drop_columns=None, position=None, use_booktabs=False, caption_short=None):
     """
     Draw a Texttable table in Latex format.
     Aside from table, all arguments are optional.
@@ -26,6 +26,7 @@ def draw_latex(table, caption=None, label=None, drop_columns=None, position=None
             This overrides the border, vertical lines, and horizontal lines.
             Note the booktabs package will need to be included in your Latex document (\\usepackage{booktabs}).
             Defaults to false.
+    :param caption_short: A string that represents the short description used in list of tables.
     :return: The formatted Latex table returned as a single string.
     """
     _sanitise_drop_columns(table._header, drop_columns)
@@ -33,7 +34,7 @@ def draw_latex(table, caption=None, label=None, drop_columns=None, position=None
     out += _draw_latex_preamble(table, position, use_booktabs)
     out += _draw_latex_header(table, drop_columns, use_booktabs)
     out += _draw_latex_content(table, drop_columns, use_booktabs)
-    out += _draw_latex_postamble(table, caption, label, use_booktabs)
+    out += _draw_latex_postamble(table, caption, label, use_booktabs, caption_short)
     return out
 
 
@@ -131,7 +132,7 @@ def _draw_latex_content(table, drop_columns, use_booktabs):
     return out
 
 
-def _draw_latex_postamble(table, caption, label, use_booktabs):
+def _draw_latex_postamble(table, caption, label, use_booktabs, caption_short):
     """
     Draw the Latex table postamble.
 
@@ -149,6 +150,7 @@ def _draw_latex_postamble(table, caption, label, use_booktabs):
     :param table: Texttable table to be rendered in Latex.
     :param caption: A caption to add to the table.
     :param label: A label to add to the table.
+    :param caption_short: Short caption used in the list of tables.
     :return: The Latex table postamble as one string.
     """
     out = ""
@@ -158,7 +160,9 @@ def _draw_latex_postamble(table, caption, label, use_booktabs):
     out += _indent_text("\\end{tabular}\n", 2)
     out += _indent_text("\\end{center}\n", 1)
     if caption is not None:
-        out += _indent_text("\\caption{" + caption + "}\n", 1)
+        out += _indent_text("\\caption", 1)
+        if caption_short is not None: out += "[" + caption_short + "]"
+        out += "{" + caption + "}\n"
     if label is not None:
         out += _indent_text("\\label{" + label + "}\n", 1)
     out += "\\end{table}"
