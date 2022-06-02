@@ -67,7 +67,7 @@ def _draw_latex_preamble(table, position, use_booktabs):
     if table._has_vlines() and not use_booktabs:
         column_str = "|".join(table._align)
     else:
-        column_str = " ".join(table._align)
+        column_str = "".join(table._align)
 
     # Border with/without edges
     if table._has_border() and not use_booktabs:

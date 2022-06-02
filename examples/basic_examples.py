@@ -82,7 +82,7 @@ def example_5():
     # Example 4 - Short Caption
     table_5 = Texttable()
     table_5.set_cols_align(["c"] * 3)
-    table_5.set_deco(Texttable.HEADER | Texttable.VLINES | Texttable.BORDER | Texttable.HLINES)
+    table_5.set_deco(Texttable.HEADER | Texttable.BORDER)
     table_5.add_rows([['Company', 'Market Cap', 'Country'],
                       ['Apple', '2.425T', 'USA'],
                       ['Saudi Aramco', '2.358T', 'Saudi Arabia'],
