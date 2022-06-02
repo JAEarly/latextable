@@ -9,7 +9,13 @@ class DropColumnError(Exception):
         super().__init__("Cannot drop column {:s} - column not in table header ({:s})\n".format(column, str(header)))
 
 
-def draw_latex(table, caption=None, caption_short=None, label=None, drop_columns=None, position=None,
+class DropRowError(Exception):
+
+    def __init__(self, n_rows, row_idx):
+        super().__init__("Cannot drop row {:d} - row is outside the range [1,{:d}]\n".format(row_idx, n_rows))
+
+
+def draw_latex(table, caption=None, caption_short=None, label=None, drop_columns=None, drop_rows=None, position=None,
                use_booktabs=False):
     """
     Draw a Texttable table in Latex format.
@@ -21,6 +27,8 @@ def draw_latex(table, caption=None, caption_short=None, label=None, drop_columns
     :param label: A string that adds a referencing label to the Latex formatting.
     :param drop_columns: A list of column names that won't be in the Latex output.
             Each column name must be in the table header.
+    :param drop_rows: A list of row indices that won't be in the Latex output.
+            Each row index must be in [0, number of rows - 1], where number of rows does not include the header.
     :param position: A string that represents LaTex's float position of the table.
             For example 'ht' results in the float position [ht].
     :param use_booktabs: Whether to override the table formatting with booktabs (https://ctan.org/pkg/booktabs?lang=en).
@@ -32,10 +40,11 @@ def draw_latex(table, caption=None, caption_short=None, label=None, drop_columns
     :return: The formatted Latex table returned as a single string.
     """
     _sanitise_drop_columns(table._header, drop_columns)
+    _sanitise_drop_rows(len(table._rows), drop_rows)
     out = ""
     out += _draw_latex_preamble(table, position, use_booktabs)
     out += _draw_latex_header(table, drop_columns, use_booktabs)
-    out += _draw_latex_content(table, drop_columns, use_booktabs)
+    out += _draw_latex_content(table, drop_columns, drop_rows, use_booktabs)
     out += _draw_latex_postamble(table, caption, caption_short, label, use_booktabs)
     return out
 
@@ -109,7 +118,7 @@ def _draw_latex_header(table, drop_columns, use_booktabs):
     return out
 
 
-def _draw_latex_content(table, drop_columns, use_booktabs):
+def _draw_latex_content(table, drop_columns, drop_rows, use_booktabs):
     """
     Draw the Latex table content.
 
@@ -122,10 +131,12 @@ def _draw_latex_content(table, drop_columns, use_booktabs):
 
     :param table: Texttable table to be rendered in Latex.
     :param drop_columns: A list of columns that should not be in the final Latex output.
+    :param drop_columns: A list of row indices that should not be in the final Latex output.
     :return: The Latex table content as a single string.
     """
     out = ""
-    for idx, row in enumerate(table._rows):
+    rows = _drop_rows(table._rows, drop_rows)
+    for idx, row in enumerate(rows):
         row = _drop_columns(row, table._header, drop_columns)
         clean_row = _clean_row(row)
         out += _indent_text(" & ".join(clean_row) + " \\\\\n", 3)
@@ -222,6 +233,39 @@ def _drop_columns(target, header, drop_columns):
     for i in sorted(to_delete, reverse=True):
         del target[i]
     return target
+
+
+def _sanitise_drop_rows(n_rows, drop_rows):
+    """
+    Check the rows to be dropped - 0 <= row_idx < n_rows for each row_idx to be dropped.
+
+    :param drop_rows: List of rows to be dropped.
+    :param n_rows: Number of rows in the table (excluding the header).
+    :return: None
+    """
+    if drop_rows is None:
+        return
+    # Check row idxs (ignores case).
+    for row_idx in drop_rows:
+        if not 0 <= row_idx < n_rows:
+            raise DropRowError(n_rows, row_idx)
+
+
+def _drop_rows(rows, drop_rows):
+    """
+    Drop columns from a target array.
+
+    :param table: Table from which the rows should be dropped.
+    :param drop_rows: List of rows to be dropped.
+    :return: The target array with the relevant rows dropped.
+    """
+    rows = rows[:]
+    if drop_rows is None:
+        return rows
+    # Delete relevant indices (in reverse order so deletion doesn't affect other index positions)
+    for i in sorted(drop_rows, reverse=True):
+        del rows[i]
+    return rows
 
 
 def _indent_text(text, indent):

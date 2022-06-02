@@ -8,6 +8,7 @@ def run():
     example_3()
     example_4()
     example_5()
+    example_6()
 
 
 def example_1():
@@ -79,7 +80,7 @@ def example_4():
 
 
 def example_5():
-    # Example 4 - Short Caption
+    # Example 5 - Short Caption
     table_5 = Texttable()
     table_5.set_cols_align(["c"] * 3)
     table_5.set_deco(Texttable.HEADER | Texttable.BORDER)
@@ -93,6 +94,24 @@ def example_5():
     print('\nLatextable Output:')
     print(latextable.draw_latex(table_5, caption="A table with a short caption.", label="table:short_caption",
                                 caption_short="Short caption"))
+
+
+def example_6():
+    # Example 6 - Drop rows
+    table_6 = Texttable()
+    table_6.set_deco(Texttable.HEADER)
+    table_6.set_cols_align(["c"] * 3)
+    table_6.add_rows([['Position', 'Team', 'Points'],
+                      ['1', 'Fulham', '90'],
+                      ['2', 'Bournemouth', '88'],
+                      ['3', 'Huddersfield', '82'],
+                      ['4', 'Nottingham Forest', '80']])
+    print('\n-- Example 6: Drop Rows --')
+    print('Texttable Output:')
+    print(table_6.draw())
+    print('\nLatextable Output:')
+    print(latextable.draw_latex(table_6, caption="A table with dropped rows.", label="table:dropped_rows",
+                                drop_rows=[1, 2]))
 
 
 if __name__ == "__main__":
