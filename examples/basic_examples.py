@@ -7,6 +7,7 @@ def run():
     example_2()
     example_3()
     example_4()
+    example_5()
 
 
 def example_1():
@@ -45,7 +46,6 @@ def example_2():
 
 
 def example_3():
-
     # Example 3 - Position
     table_3 = Texttable()
     table_3.set_cols_align(["c"] * 4)
@@ -76,6 +76,23 @@ def example_4():
     print(table_4.draw())
     print('\nLatextable Output:')
     print(latextable.draw_latex(table_4, caption="A table using booktabs.", label="table:booktabs", use_booktabs=True))
+
+
+def example_5():
+    # Example 4 - Short Caption
+    table_5 = Texttable()
+    table_5.set_cols_align(["c"] * 3)
+    table_5.set_deco(Texttable.HEADER | Texttable.VLINES | Texttable.BORDER | Texttable.HLINES)
+    table_5.add_rows([['Company', 'Market Cap', 'Country'],
+                      ['Apple', '2.425T', 'USA'],
+                      ['Saudi Aramco', '2.358T', 'Saudi Arabia'],
+                      ['Microsoft', '2.011T', 'USA']])
+    print('\n-- Example 5: Short Caption --')
+    print('Texttable Output:')
+    print(table_5.draw())
+    print('\nLatextable Output:')
+    print(latextable.draw_latex(table_5, caption="A table with a short caption.", label="table:short_caption",
+                                caption_short="Short caption"))
 
 
 if __name__ == "__main__":
