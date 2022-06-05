@@ -15,8 +15,8 @@ class DropRowError(Exception):
         super().__init__("Cannot drop row {:d} - row is outside the range [1,{:d}]\n".format(row_idx, n_rows))
 
 
-def draw_latex(table, caption=None, caption_short=None, label=None, drop_columns=None, drop_rows=None, position=None,
-               use_booktabs=False):
+def draw_latex(table, caption=None, caption_short=None, caption_above=False, label=None, drop_columns=None,
+               drop_rows=None, position=None, use_booktabs=False):
     """
     Draw a Texttable table in Latex format.
     Aside from table, all arguments are optional.
@@ -24,6 +24,7 @@ def draw_latex(table, caption=None, caption_short=None, label=None, drop_columns
     :param table: Texttable table to be rendered in Latex.
     :param caption: A string that adds a caption to the Latex formatting.
     :param caption_short: A string that adds a short caption (used in the list of tables). Ignored if caption is None.
+    :param caption_above: If True, the caption will be added above the table rather than below it (default).
     :param label: A string that adds a referencing label to the Latex formatting.
     :param drop_columns: A list of column names that won't be in the Latex output.
             Each column name must be in the table header.
@@ -42,14 +43,27 @@ def draw_latex(table, caption=None, caption_short=None, label=None, drop_columns
     _sanitise_drop_columns(table._header, drop_columns)
     _sanitise_drop_rows(len(table._rows), drop_rows)
     out = ""
-    out += _draw_latex_preamble(table, position, use_booktabs)
-    out += _draw_latex_header(table, drop_columns, use_booktabs)
-    out += _draw_latex_content(table, drop_columns, drop_rows, use_booktabs)
-    out += _draw_latex_postamble(table, caption, caption_short, label, use_booktabs)
+    out += _draw_latex_preamble(table=table,
+                                position=position,
+                                caption=caption if caption_above else None,
+                                caption_short=caption_short if caption_above else None,
+                                use_booktabs=use_booktabs)
+    out += _draw_latex_header(table=table,
+                              drop_columns=drop_columns,
+                              use_booktabs=use_booktabs)
+    out += _draw_latex_content(table=table,
+                               drop_columns=drop_columns,
+                               drop_rows=drop_rows,
+                               use_booktabs=use_booktabs)
+    out += _draw_latex_postamble(table=table,
+                                 caption=caption if not caption_above else None,
+                                 caption_short=caption_short if not caption_above else None,
+                                 label=label,
+                                 use_booktabs=use_booktabs)
     return out
 
 
-def _draw_latex_preamble(table, position, use_booktabs):
+def _draw_latex_preamble(table, position, caption, caption_short, use_booktabs):
     """
     Draw the Latex table preamble.
 
@@ -64,12 +78,16 @@ def _draw_latex_preamble(table, position, use_booktabs):
     :param table: Texttable table to be rendered in Latex.
     :return: The Latex table preamble as a single string.
     """
-    out = "\\begin{table}" 
-
+    # Start table with optional position
+    out = "\\begin{table}"
     if position is not None:
         out += '[{}]'.format(position)
-
     out += "\n"
+
+    # Add caption if given
+    out += _draw_table_caption(caption, caption_short)
+
+    # Begin center
     out += _indent_text("\\begin{center}\n", 1)
 
     # Column setup with/without vlines
@@ -166,20 +184,35 @@ def _draw_latex_postamble(table, caption, caption_short, label, use_booktabs):
     :param label: A label to add to the table.
     :return: The Latex table postamble as one string.
     """
+    # Add bottom rule
     out = ""
     if table._has_border() or use_booktabs:
         rule = 'bottomrule' if use_booktabs else 'hline'
         out += _indent_text("\\{}\n".format(rule), 3)
+
+    # Close tabular and center environments
     out += _indent_text("\\end{tabular}\n", 2)
     out += _indent_text("\\end{center}\n", 1)
+
+    # Add caption if given
+    out += _draw_table_caption(caption, caption_short)
+
+    # Add caption if given
+    if label is not None:
+        out += _indent_text("\\label{" + label + "}\n", 1)
+
+    # End!
+    out += "\\end{table}"
+    return out
+
+
+def _draw_table_caption(caption, caption_short):
+    out = ""
     if caption is not None:
         out += _indent_text("\\caption", 1)
         if caption_short is not None:
             out += "[" + caption_short + "]"
         out += "{" + caption + "}\n"
-    if label is not None:
-        out += _indent_text("\\label{" + label + "}\n", 1)
-    out += "\\end{table}"
     return out
 
 
@@ -253,9 +286,9 @@ def _sanitise_drop_rows(n_rows, drop_rows):
 
 def _drop_rows(rows, drop_rows):
     """
-    Drop columns from a target array.
+    Drop rows by their indices.
 
-    :param table: Table from which the rows should be dropped.
+    :param rows: Table from which the rows should be dropped.
     :param drop_rows: List of rows to be dropped.
     :return: The target array with the relevant rows dropped.
     """

@@ -9,6 +9,7 @@ def run():
     example_4()
     example_5()
     example_6()
+    example_7()
 
 
 def example_1():
@@ -112,6 +113,23 @@ def example_6():
     print('\nLatextable Output:')
     print(latextable.draw_latex(table_6, caption="A table with dropped rows.", label="table:dropped_rows",
                                 drop_rows=[1, 2]))
+
+
+def example_7():
+    # Example 7 - Caption above
+    table_7 = Texttable()
+    table_7.set_deco(Texttable.HEADER | Texttable.VLINES)
+    table_7.set_cols_align(["c"] * 3)
+    table_7.add_rows([['Rank', 'Name', 'ELO'],
+                      ['1', 'Stockfish 15', '3541'],
+                      ['2', 'Dragon by Komodo', '3535'],
+                      ['3', 'Fat Fritz', '3518']])
+    print('\n-- Example 7: Caption Above --')
+    print('Texttable Output:')
+    print(table_7.draw())
+    print('\nLatextable Output:')
+    print(latextable.draw_latex(table_7, caption="This caption is above the table!", label="table:caption_above",
+                                caption_above=True))
 
 
 if __name__ == "__main__":
