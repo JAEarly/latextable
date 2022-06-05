@@ -7,6 +7,9 @@ def run():
     example_2()
     example_3()
     example_4()
+    example_5()
+    example_6()
+    example_7()
 
 
 def example_1():
@@ -45,7 +48,6 @@ def example_2():
 
 
 def example_3():
-
     # Example 3 - Position
     table_3 = Texttable()
     table_3.set_cols_align(["c"] * 4)
@@ -76,6 +78,58 @@ def example_4():
     print(table_4.draw())
     print('\nLatextable Output:')
     print(latextable.draw_latex(table_4, caption="A table using booktabs.", label="table:booktabs", use_booktabs=True))
+
+
+def example_5():
+    # Example 5 - Short Caption
+    table_5 = Texttable()
+    table_5.set_cols_align(["c"] * 3)
+    table_5.set_deco(Texttable.HEADER | Texttable.BORDER)
+    table_5.add_rows([['Company', 'Market Cap', 'Country'],
+                      ['Apple', '2.425T', 'USA'],
+                      ['Saudi Aramco', '2.358T', 'Saudi Arabia'],
+                      ['Microsoft', '2.011T', 'USA']])
+    print('\n-- Example 5: Short Caption --')
+    print('Texttable Output:')
+    print(table_5.draw())
+    print('\nLatextable Output:')
+    print(latextable.draw_latex(table_5, caption="A table with a short caption.", label="table:short_caption",
+                                caption_short="Short caption"))
+
+
+def example_6():
+    # Example 6 - Drop rows
+    table_6 = Texttable()
+    table_6.set_deco(Texttable.HEADER)
+    table_6.set_cols_align(["c"] * 3)
+    table_6.add_rows([['Position', 'Team', 'Points'],
+                      ['1', 'Fulham', '90'],
+                      ['2', 'Bournemouth', '88'],
+                      ['3', 'Huddersfield', '82'],
+                      ['4', 'Nottingham Forest', '80']])
+    print('\n-- Example 6: Drop Rows --')
+    print('Texttable Output:')
+    print(table_6.draw())
+    print('\nLatextable Output:')
+    print(latextable.draw_latex(table_6, caption="A table with dropped rows.", label="table:dropped_rows",
+                                drop_rows=[1, 2]))
+
+
+def example_7():
+    # Example 7 - Caption above
+    table_7 = Texttable()
+    table_7.set_deco(Texttable.HEADER | Texttable.VLINES)
+    table_7.set_cols_align(["c"] * 3)
+    table_7.add_rows([['Rank', 'Name', 'ELO'],
+                      ['1', 'Stockfish 15', '3541'],
+                      ['2', 'Dragon by Komodo', '3535'],
+                      ['3', 'Fat Fritz', '3518']])
+    print('\n-- Example 7: Caption Above --')
+    print('Texttable Output:')
+    print(table_7.draw())
+    print('\nLatextable Output:')
+    print(latextable.draw_latex(table_7, caption="This caption is above the table!", label="table:caption_above",
+                                caption_above=True))
 
 
 if __name__ == "__main__":

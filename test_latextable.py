@@ -37,6 +37,36 @@ class LatexTableTest(unittest.TestCase):
         self.assertTrue(target[1] in two_drop)
         self.assertTrue(target[2] not in two_drop)
 
+    def test_sanitise_drop_rows(self):
+        rows = [["R0C0", "R0C1", "R0C2"],
+                ["R1C0", "R1C1", "R1C2"],
+                ["R2C0", "R2C1", "R2C2"]]
+        self.assertIsNone(latextable._sanitise_drop_rows(len(rows), [2]))
+        self.assertIsNone(latextable._sanitise_drop_rows(len(rows), [0, 2]))
+        self.assertRaises(latextable.DropRowError, latextable._sanitise_drop_rows, len(rows), [-1])
+        self.assertRaises(latextable.DropRowError, latextable._sanitise_drop_rows, len(rows), [3])
+        self.assertRaises(latextable.DropRowError, latextable._sanitise_drop_rows, len(rows), [-1, 3])
+
+    def test_drop_rows(self):
+        rows = [["R0C0", "R0C1", "R0C2"],
+                ["R1C0", "R1C1", "R1C2"],
+                ["R2C0", "R2C1", "R2C2"]]
+        no_drop = latextable._drop_rows(rows, [])
+        one_drop = latextable._drop_rows(rows, [2])
+        two_drop = latextable._drop_rows(rows, [0, 1])
+        self.assertEqual(len(no_drop), 3)
+        self.assertTrue(["R0C0", "R0C1", "R0C2"] in no_drop)
+        self.assertTrue(["R1C0", "R1C1", "R1C2"] in no_drop)
+        self.assertTrue(["R2C0", "R2C1", "R2C2"] in no_drop)
+        self.assertEqual(len(one_drop), 2)
+        self.assertTrue(["R0C0", "R0C1", "R0C2"] in one_drop)
+        self.assertTrue(["R1C0", "R1C1", "R1C2"] in one_drop)
+        self.assertTrue(["R2C0", "R2C1", "R2C2"] not in one_drop)
+        self.assertEqual(len(two_drop), 1)
+        self.assertTrue(["R0C0", "R0C1", "R0C2"] not in two_drop)
+        self.assertTrue(["R1C0", "R1C1", "R1C2"] not in two_drop)
+        self.assertTrue(["R2C0", "R2C1", "R2C2"] in two_drop)
+
     def test_indent_text(self):
         text = "test"
         no_ident = latextable._indent_text(text, 0)

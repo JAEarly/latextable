@@ -9,16 +9,27 @@ class DropColumnError(Exception):
         super().__init__("Cannot drop column {:s} - column not in table header ({:s})\n".format(column, str(header)))
 
 
-def draw_latex(table, caption=None, label=None, drop_columns=None, position=None, use_booktabs=False, caption_short=None):
+class DropRowError(Exception):
+
+    def __init__(self, n_rows, row_idx):
+        super().__init__("Cannot drop row {:d} - row is outside the range [1,{:d}]\n".format(row_idx, n_rows))
+
+
+def draw_latex(table, caption=None, caption_short=None, caption_above=False, label=None, drop_columns=None,
+               drop_rows=None, position=None, use_booktabs=False):
     """
     Draw a Texttable table in Latex format.
     Aside from table, all arguments are optional.
 
     :param table: Texttable table to be rendered in Latex.
     :param caption: A string that adds a caption to the Latex formatting.
+    :param caption_short: A string that adds a short caption (used in the list of tables). Ignored if caption is None.
+    :param caption_above: If True, the caption will be added above the table rather than below it (default).
     :param label: A string that adds a referencing label to the Latex formatting.
     :param drop_columns: A list of column names that won't be in the Latex output.
             Each column name must be in the table header.
+    :param drop_rows: A list of row indices that won't be in the Latex output.
+            Each row index must be in [0, number of rows - 1], where number of rows does not include the header.
     :param position: A string that represents LaTex's float position of the table.
             For example 'ht' results in the float position [ht].
     :param use_booktabs: Whether to override the table formatting with booktabs (https://ctan.org/pkg/booktabs?lang=en).
@@ -26,19 +37,33 @@ def draw_latex(table, caption=None, label=None, drop_columns=None, position=None
             This overrides the border, vertical lines, and horizontal lines.
             Note the booktabs package will need to be included in your Latex document (\\usepackage{booktabs}).
             Defaults to false.
-    :param caption_short: A string that represents the short description used in list of tables.
+
     :return: The formatted Latex table returned as a single string.
     """
     _sanitise_drop_columns(table._header, drop_columns)
+    _sanitise_drop_rows(len(table._rows), drop_rows)
     out = ""
-    out += _draw_latex_preamble(table, position, use_booktabs)
-    out += _draw_latex_header(table, drop_columns, use_booktabs)
-    out += _draw_latex_content(table, drop_columns, use_booktabs)
-    out += _draw_latex_postamble(table, caption, label, use_booktabs, caption_short)
+    out += _draw_latex_preamble(table=table,
+                                position=position,
+                                caption=caption if caption_above else None,
+                                caption_short=caption_short if caption_above else None,
+                                use_booktabs=use_booktabs)
+    out += _draw_latex_header(table=table,
+                              drop_columns=drop_columns,
+                              use_booktabs=use_booktabs)
+    out += _draw_latex_content(table=table,
+                               drop_columns=drop_columns,
+                               drop_rows=drop_rows,
+                               use_booktabs=use_booktabs)
+    out += _draw_latex_postamble(table=table,
+                                 caption=caption if not caption_above else None,
+                                 caption_short=caption_short if not caption_above else None,
+                                 label=label,
+                                 use_booktabs=use_booktabs)
     return out
 
 
-def _draw_latex_preamble(table, position, use_booktabs):
+def _draw_latex_preamble(table, position, caption, caption_short, use_booktabs):
     """
     Draw the Latex table preamble.
 
@@ -53,19 +78,23 @@ def _draw_latex_preamble(table, position, use_booktabs):
     :param table: Texttable table to be rendered in Latex.
     :return: The Latex table preamble as a single string.
     """
-    out = "\\begin{table}" 
-
+    # Start table with optional position
+    out = "\\begin{table}"
     if position is not None:
         out += '[{}]'.format(position)
-
     out += "\n"
+
+    # Add caption if given
+    out += _draw_table_caption(caption, caption_short)
+
+    # Begin center
     out += _indent_text("\\begin{center}\n", 1)
 
     # Column setup with/without vlines
     if table._has_vlines() and not use_booktabs:
         column_str = "|".join(table._align)
     else:
-        column_str = " ".join(table._align)
+        column_str = "".join(table._align)
 
     # Border with/without edges
     if table._has_border() and not use_booktabs:
@@ -107,7 +136,7 @@ def _draw_latex_header(table, drop_columns, use_booktabs):
     return out
 
 
-def _draw_latex_content(table, drop_columns, use_booktabs):
+def _draw_latex_content(table, drop_columns, drop_rows, use_booktabs):
     """
     Draw the Latex table content.
 
@@ -120,10 +149,12 @@ def _draw_latex_content(table, drop_columns, use_booktabs):
 
     :param table: Texttable table to be rendered in Latex.
     :param drop_columns: A list of columns that should not be in the final Latex output.
+    :param drop_columns: A list of row indices that should not be in the final Latex output.
     :return: The Latex table content as a single string.
     """
     out = ""
-    for idx, row in enumerate(table._rows):
+    rows = _drop_rows(table._rows, drop_rows)
+    for idx, row in enumerate(rows):
         row = _drop_columns(row, table._header, drop_columns)
         clean_row = _clean_row(row)
         out += _indent_text(" & ".join(clean_row) + " \\\\\n", 3)
@@ -132,7 +163,7 @@ def _draw_latex_content(table, drop_columns, use_booktabs):
     return out
 
 
-def _draw_latex_postamble(table, caption, label, use_booktabs, caption_short):
+def _draw_latex_postamble(table, caption, caption_short, label, use_booktabs):
     """
     Draw the Latex table postamble.
 
@@ -149,23 +180,39 @@ def _draw_latex_postamble(table, caption, label, use_booktabs, caption_short):
 
     :param table: Texttable table to be rendered in Latex.
     :param caption: A caption to add to the table.
+    :param caption_short: Short caption used in the list of tables. Ignored if caption is None.
     :param label: A label to add to the table.
-    :param caption_short: Short caption used in the list of tables.
     :return: The Latex table postamble as one string.
     """
+    # Add bottom rule
     out = ""
     if table._has_border() or use_booktabs:
         rule = 'bottomrule' if use_booktabs else 'hline'
         out += _indent_text("\\{}\n".format(rule), 3)
+
+    # Close tabular and center environments
     out += _indent_text("\\end{tabular}\n", 2)
     out += _indent_text("\\end{center}\n", 1)
-    if caption is not None:
-        out += _indent_text("\\caption", 1)
-        if caption_short is not None: out += "[" + caption_short + "]"
-        out += "{" + caption + "}\n"
+
+    # Add caption if given
+    out += _draw_table_caption(caption, caption_short)
+
+    # Add caption if given
     if label is not None:
         out += _indent_text("\\label{" + label + "}\n", 1)
+
+    # End!
     out += "\\end{table}"
+    return out
+
+
+def _draw_table_caption(caption, caption_short):
+    out = ""
+    if caption is not None:
+        out += _indent_text("\\caption", 1)
+        if caption_short is not None:
+            out += "[" + caption_short + "]"
+        out += "{" + caption + "}\n"
     return out
 
 
@@ -219,6 +266,39 @@ def _drop_columns(target, header, drop_columns):
     for i in sorted(to_delete, reverse=True):
         del target[i]
     return target
+
+
+def _sanitise_drop_rows(n_rows, drop_rows):
+    """
+    Check the rows to be dropped - 0 <= row_idx < n_rows for each row_idx to be dropped.
+
+    :param drop_rows: List of rows to be dropped.
+    :param n_rows: Number of rows in the table (excluding the header).
+    :return: None
+    """
+    if drop_rows is None:
+        return
+    # Check row idxs (ignores case).
+    for row_idx in drop_rows:
+        if not 0 <= row_idx < n_rows:
+            raise DropRowError(n_rows, row_idx)
+
+
+def _drop_rows(rows, drop_rows):
+    """
+    Drop rows by their indices.
+
+    :param rows: Table from which the rows should be dropped.
+    :param drop_rows: List of rows to be dropped.
+    :return: The target array with the relevant rows dropped.
+    """
+    rows = rows[:]
+    if drop_rows is None:
+        return rows
+    # Delete relevant indices (in reverse order so deletion doesn't affect other index positions)
+    for i in sorted(drop_rows, reverse=True):
+        del rows[i]
+    return rows
 
 
 def _indent_text(text, indent):
