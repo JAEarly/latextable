@@ -8,13 +8,11 @@
 This package extends its functionality to allow the table to be directly output in Latex, removing the tedious copy and paste chore.
 The Latex output matches the table design, and there are utilities for adding table captions, labels, and positions.
 
-![](docs/cover_cropped.png)
-
 ## Features
 - Draw a table object in a Latex format.
 - Matches table decoration (border, header, hlines, vlines).
 - Applies horizontal column alignment.
-- Allows the user to drop certain columns from the output.
+- Allows the user to drop columns and rows from the output.
 - Provides the ability to add a caption, reference label, and position to the Latex output.
 - The output is correctly indented for directly copying into Latex.
 - Supports [booktabs](https://ctan.org/pkg/booktabs?lang=en) formatting.
@@ -38,28 +36,32 @@ texttable
 The single function `latextable.draw_latex` returns a formatted Latex string based on the provided table.
 Aside from table, all arguments are optional.
 
-
 ```
-draw_latex(table, caption=None, label=None, drop_columns=None, position=None):
+draw_latex(table, caption=None, caption_short=None, caption_above=False, label=None, drop_columns=None,
+               drop_rows=None, position=None, use_booktabs=False):
     table: Texttable table to be rendered in Latex.
     caption: A string that adds a caption to the Latex formatting.
+    caption_short: A string that adds a short caption (used in the list of tables). Ignored if caption is None.
+    caption_above: If True, the caption will be added above the table rather than below it (default).
     label: A string that adds a referencing label to the Latex formatting.
     drop_columns: A list of column names that won't be in the Latex output.
-        Each column name must be in the table header.
+      Each column name must be in the table header.
+    drop_rows: A list of row indices that won't be in the Latex output.
+      Each row index must be in [0, number of rows - 1], where number of rows does not include the header.
     position: A string that represents LaTex's float position of the table.
-        For example 'ht' results in the float position [ht].
+      For example 'ht' results in the float position [ht].
     use_booktabs: Whether to override the table formatting with booktabs (https://ctan.org/pkg/booktabs?lang=en).
-        If true, the texttable formatting is ignored, and instead the default booktabs style is used.
-        This overrides the border, vertical lines, and horizontal lines.
-        Note the booktabs package will need to be included in your Latex document (\usepackage{booktabs}).
-        Defaults to false.
+      If true, the texttable formatting is ignored, and instead the default booktabs style is used.
+      This overrides the border, vertical lines, and horizontal lines.
+      Note the booktabs package will need to be included in your Latex document (\\usepackage{booktabs}).
+      Defaults to false.
 
     return: The formatted Latex table returned as a single string.
 ```
 
 ### Examples
 A basic example is given below.
-For more see the [examples directory](examples/).
+For more see the [examples directory](examples).
 
 Code:
 
@@ -126,6 +128,11 @@ A working example is also given in this [Colab Notebook](https://colab.research.
 
 ## Release History
 
+* 0.3.0
+    * Added support for [short captions](https://tex.stackexchange.com/questions/11579/short-captions-for-figures-in-listoffigures)
+      (thanks to [PhilW92](https://github.com/PhilW92)).
+    * Added the ability to drop rows as well as columns.
+    * Captions can now be placed above tables instead of below.
 * 0.2.1
     * Removed row hlines when using booktabs.
 * 0.2.0
@@ -133,12 +140,12 @@ A working example is also given in this [Colab Notebook](https://colab.research.
 * 0.1.1
     * Minor changes to documentation.
 * 0.1.0
-    * Initial Release
+    * Initial Release.
 
 ## Meta
 
-[Joseph Early](https://www.jearly.co.uk/)  
-[@JosephAEarly](https://twitter.com/JosephAEarly)  
-joseph.early.ai@gmail.com
+Website: [Joseph Early](https://www.jearly.co.uk/)  
+Twitter: [@JosephAEarly](https://twitter.com/JosephAEarly)  
+Email: [joseph.early.ai@gmail.com](mailto:joseph.early.ai@gmail.com)  
 
-Distributed under the MIT license. See ``LICENSE`` for more information.
+Distributed under the MIT license. See [LICENSE](LICENSE) for more information.
