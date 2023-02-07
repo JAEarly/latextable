@@ -18,9 +18,9 @@ jobs:
         with:
           python-version: ${{ matrix.python }}
           architecture: x64
-      - name: Pip install
-        run: pip install --upgrade pip build setuptools wheel setuptools_scm
-      - name: Pip install
+      - name: Pip install basic
+        run: pip install --upgrade pip build setuptools
+      - name: Pip install requirements
         run: pip install -r requirements.txt
       - name: build package
         run: python3 -m build -nwx .
