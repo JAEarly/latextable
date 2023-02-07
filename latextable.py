@@ -91,6 +91,9 @@ def _draw_latex_preamble(table, position, caption, caption_short, use_booktabs):
     out += _indent_text("\\begin{center}\n", 1)
 
     # Column setup with/without vlines
+    #  If texttable align not set, default to left alignment (as per texttable)
+    if not hasattr(table, "_align"):
+        table._align = ["l"] * table._row_size
     if table._has_vlines() and not use_booktabs:
         column_str = "|".join(table._align)
     else:

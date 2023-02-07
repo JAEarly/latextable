@@ -10,6 +10,7 @@ def run():
     example_5()
     example_6()
     example_7()
+    example_8()
 
 
 def example_1():
@@ -130,6 +131,20 @@ def example_7():
     print('\nLatextable Output:')
     print(latextable.draw_latex(table_7, caption="This caption is above the table!", label="table:caption_above",
                                 caption_above=True))
+
+
+def example_8():
+    # Example 8 - Test with no align
+    table_8 = Texttable()
+    table_8.add_rows([["A", "B", "C"],
+                     ["a1", "b1", "c1"],
+                     ["a2", "b2", "c2"],
+                     ["a3", "b3", "c3"]])
+    print('-- Example 8: Without texttable align --')
+    print('Texttable Output:')
+    print(table_8.draw())
+    print('\nLatextable Output:')
+    print(latextable.draw_latex(table_8, caption="An example table.", label="table:example_table", use_booktabs=True))
 
 
 if __name__ == "__main__":
