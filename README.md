@@ -151,6 +151,8 @@ A working example is also given in this [Colab Notebook](https://colab.research.
 
 Website: [Joseph Early](https://www.jearly.co.uk/)  
 Twitter: [@JosephAEarly](https://twitter.com/JosephAEarly)  
-Email: [joseph.early.ai@gmail.com](mailto:joseph.early.ai@gmail.com)  
+Email: [joseph.early.ai@gmail.com](mailto:joseph.early.ai@gmail.com)
+
+[!["Buy Me A Coffee"](https://www.buymeacoffee.com/assets/img/custom_images/orange_img.png)](https://www.buymeacoffee.com/jearly)
 
 Distributed under the MIT license. See [LICENSE](LICENSE) for more information.
