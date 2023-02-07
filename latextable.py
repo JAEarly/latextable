@@ -17,7 +17,7 @@ class DropRowError(Exception):
 
 
 def draw_latex(table, caption=None, caption_short=None, caption_above=False, label=None, drop_columns=None,
-               drop_rows=None, position=None, use_booktabs=False):
+               drop_rows=None, position=None, use_booktabs=False, multicolumn_header_dict=None):
     """
     Draw a Texttable table in Latex format.
     Aside from table, all arguments are optional.
@@ -38,6 +38,9 @@ def draw_latex(table, caption=None, caption_short=None, caption_above=False, lab
             This overrides the border, vertical lines, and horizontal lines.
             Note the booktabs package will need to be included in your Latex document (\\usepackage{booktabs}).
             Defaults to false.
+    :param multicolumn_header_dict: A dictionary mapping from multicolumn header names to their width.
+            An additional header row will be added above the normal header row, where the entries can cover multiple
+            columns.
 
     :return: The formatted Latex table returned as a single string.
     """
@@ -60,7 +63,8 @@ def draw_latex(table, caption=None, caption_short=None, caption_above=False, lab
                                 use_booktabs=use_booktabs)
     out += _draw_latex_header(table=table,
                               drop_columns=drop_columns,
-                              use_booktabs=use_booktabs)
+                              use_booktabs=use_booktabs,
+                              multicolumn_header_dict=multicolumn_header_dict)
     out += _draw_latex_content(table=table,
                                drop_columns=drop_columns,
                                drop_rows=drop_rows,
@@ -119,7 +123,7 @@ def _draw_latex_preamble(table, position, caption, caption_short, use_booktabs):
     return out
 
 
-def _draw_latex_header(table, drop_columns, use_booktabs):
+def _draw_latex_header(table, drop_columns, use_booktabs, multicolumn_header_dict=None):
     """
     Draw the Latex header.
 
@@ -132,8 +136,10 @@ def _draw_latex_header(table, drop_columns, use_booktabs):
 
     :param table: Texttable table to be rendered in Latex.
     :param drop_columns: A list of columns that should not be in the final Latex output.
+    :param multicolumn_header_dict: A dictionary mapping from multicolumn header names to their width.
     :return: The Latex table header as a single string.
     """
+    # Top rule
     out = ""
     if table._has_border() or use_booktabs:
         rule = 'toprule' if use_booktabs else 'hline'
@@ -141,8 +147,17 @@ def _draw_latex_header(table, drop_columns, use_booktabs):
 
     # Drop header columns if required
     header = _drop_columns(table._header.copy(), table._header, drop_columns)
+
+    # Multicolumn header
+    if multicolumn_header_dict is not None:
+        multicolumn_header_list = ["\\multicolumn{{{:d}}}{{c}}{{{:s}}}".format(v, k)
+                                   for k, v in multicolumn_header_dict.items()]
+        out += _indent_text(" & ".join(multicolumn_header_list) + " \\\\\n", 3)
+
+    # Normal header
     out += _indent_text(" & ".join(header) + " \\\\\n", 3)
 
+    # Mid rule
     if table._has_header() or use_booktabs:
         rule = 'midrule' if use_booktabs else 'hline'
         out += _indent_text("\\{}\n".format(rule), 3)

@@ -12,6 +12,7 @@ def run():
     example_7()
     example_8()
     example_9()
+    example_10()
 
 
 def example_1():
@@ -145,7 +146,7 @@ def example_8():
     print('Texttable Output:')
     print(table_8.draw())
     print('\nLatextable Output:')
-    print(latextable.draw_latex(table_8, caption="An example table.", label="table:example_table", use_booktabs=True))
+    print(latextable.draw_latex(table_8, use_booktabs=True))
 
 
 def example_9():
@@ -156,7 +157,23 @@ def example_9():
             ["a3", "b3", "c3"]]
     print('\n-- Example 9: Without using texttable table --')
     print('Latextable Output:')
-    print(latextable.draw_latex(rows, caption="An example table.", label="table:example_table", use_booktabs=True))
+    print(latextable.draw_latex(rows, use_booktabs=True))
+
+
+def example_10():
+    # Example 10 - Multicolumn header
+    rows = [["R", "A", "B", "C", "D"],
+            ["1", "a1", "b1", "c1", "d1"],
+            ["2", "a2", "b2", "c2", "d2"],
+            ["3", "a3", "b3", "c3", "d3"]]
+    multicolumn_header_dict = {
+        "": 1,
+        "AB": 2,
+        "CD": 2,
+    }
+    print('\n-- Example 10: Multicolumn header --')
+    print('Latextable Output:')
+    print(latextable.draw_latex(rows, use_booktabs=True, multicolumn_header_dict=multicolumn_header_dict))
 
 
 if __name__ == "__main__":
