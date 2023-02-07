@@ -1,6 +1,7 @@
 """
 Drawing functions for outputting a Texttable table in a Latex format.
 """
+import texttable
 
 
 class DropColumnError(Exception):
@@ -21,7 +22,7 @@ def draw_latex(table, caption=None, caption_short=None, caption_above=False, lab
     Draw a Texttable table in Latex format.
     Aside from table, all arguments are optional.
 
-    :param table: Texttable table to be rendered in Latex.
+    :param table: Texttable table to be rendered in Latex, or a list of rows that represents a table.
     :param caption: A string that adds a caption to the Latex formatting.
     :param caption_short: A string that adds a short caption (used in the list of tables). Ignored if caption is None.
     :param caption_above: If True, the caption will be added above the table rather than below it (default).
@@ -40,8 +41,17 @@ def draw_latex(table, caption=None, caption_short=None, caption_above=False, lab
 
     :return: The formatted Latex table returned as a single string.
     """
+    # If passed a list of rows rather than a table, create the table first
+    if type(table) != texttable.Texttable:
+        rows = table
+        table = texttable.Texttable()
+        table.add_rows(rows)
+
+    # Sanitise inputs
     _sanitise_drop_columns(table._header, drop_columns)
     _sanitise_drop_rows(len(table._rows), drop_rows)
+
+    # Create and return the latex output
     out = ""
     out += _draw_latex_preamble(table=table,
                                 position=position,
