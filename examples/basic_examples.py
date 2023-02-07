@@ -13,6 +13,7 @@ def run():
     example_8()
     example_9()
     example_10()
+    example_11()
 
 
 def example_1():
@@ -166,14 +167,22 @@ def example_10():
             ["1", "a1", "b1", "c1", "d1"],
             ["2", "a2", "b2", "c2", "d2"],
             ["3", "a3", "b3", "c3", "d3"]]
-    multicolumn_header_dict = {
-        "": 1,
-        "AB": 2,
-        "CD": 2,
-    }
+    multicolumn_header = [("", 1), ("AB", 2), ("CD", 2)]
     print('\n-- Example 10: Multicolumn header --')
     print('Latextable Output:')
-    print(latextable.draw_latex(rows, use_booktabs=True, multicolumn_header_dict=multicolumn_header_dict))
+    print(latextable.draw_latex(rows, use_booktabs=True, multicolumn_header=multicolumn_header))
+
+
+def example_11():
+    # Example 11 - Multicolumn header with drop column
+    rows = [["R", "A", "B", "C", "D"],
+            ["1", "a1", "b1", "c1", "d1"],
+            ["2", "a2", "b2", "c2", "d2"],
+            ["3", "a3", "b3", "c3", "d3"]]
+    multicolumn_header = [("", 1), ("AB", 2), ("", 1)]
+    print('\n-- Example 11: Multicolumn header with drop column --')
+    print('Latextable Output:')
+    print(latextable.draw_latex(rows, use_booktabs=True, drop_columns=['C'], multicolumn_header=multicolumn_header))
 
 
 if __name__ == "__main__":
