@@ -24,7 +24,7 @@ class DropRowError(Exception):
 
 
 def draw_latex(table, caption=None, caption_short=None, caption_above=False, label=None, drop_columns=None,
-               drop_rows=None, position=None, use_booktabs=False, multicolumn_header=None):
+               drop_rows=None, position=None, use_booktabs=False, multicolumn_header=None, alias=None):
     """
     Draw a Texttable table in Latex format.
     Aside from table, all arguments are optional.
@@ -49,6 +49,9 @@ def draw_latex(table, caption=None, caption_short=None, caption_above=False, lab
             An additional header row will be added above the normal header row.
             The first entry in each 2-tuple is the header name, and the second entry is the number of columns it spans.
             The sum of column widths should equal the number of columns (after dropping any requested columns).
+    :param alias: A str -> str dictionary denoting strings in the table data that should be aliased in the Latex output.
+            Useful for escaping special Latex characters (e.g. &) or inserting custom Latex.
+            For example, to replace '+-' with '$\\pm$', the dict would be {'+-': '$\\pm$'}.
 
     :return: The formatted Latex table returned as a single string.
     """
@@ -61,6 +64,16 @@ def draw_latex(table, caption=None, caption_short=None, caption_above=False, lab
     # Sanitise inputs
     _sanitise_drop_columns(table._header, drop_columns, multicolumn_header)
     _sanitise_drop_rows(len(table._rows), drop_rows)
+
+    # Apply aliases
+    if alias is not None:
+        for s_src, s_dst in alias.items():
+            # Apply to header
+            table._header = [h.replace(s_src, s_dst) for h in table._header]
+            # Apply to rows
+            for r_idx, row in enumerate(table._rows):
+                # Apply to header
+                table._rows[r_idx] = [r.replace(s_src, s_dst) for r in table._rows[r_idx]]
 
     # Create and return the latex output
     out = ""
