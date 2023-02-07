@@ -11,6 +11,7 @@ def run():
     example_6()
     example_7()
     example_8()
+    example_9()
 
 
 def example_1():
@@ -140,11 +141,22 @@ def example_8():
                      ["a1", "b1", "c1"],
                      ["a2", "b2", "c2"],
                      ["a3", "b3", "c3"]])
-    print('-- Example 8: Without texttable align --')
+    print('\n-- Example 8: Without texttable align --')
     print('Texttable Output:')
     print(table_8.draw())
     print('\nLatextable Output:')
     print(latextable.draw_latex(table_8, caption="An example table.", label="table:example_table", use_booktabs=True))
+
+
+def example_9():
+    # Example 9 - Test without using texttable
+    rows = [["A", "B", "C"],
+            ["a1", "b1", "c1"],
+            ["a2", "b2", "c2"],
+            ["a3", "b3", "c3"]]
+    print('\n-- Example 9: Without using texttable table --')
+    print('Latextable Output:')
+    print(latextable.draw_latex(rows, caption="An example table.", label="table:example_table", use_booktabs=True))
 
 
 if __name__ == "__main__":
