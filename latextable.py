@@ -10,6 +10,13 @@ class DropColumnError(Exception):
         super().__init__("Cannot drop column {:s} - column not in table header ({:s})\n".format(column, str(header)))
 
 
+class MulticolumnHeaderError(Exception):
+
+    def __init__(self, n_expected_columns, sum_multicolumn):
+        super().__init__("Mismatch between multicolumn size and number of actual columns."
+                         " Got {:d} but expected {:d}.\n".format(sum_multicolumn, n_expected_columns))
+
+
 class DropRowError(Exception):
 
     def __init__(self, n_rows, row_idx):
@@ -17,7 +24,7 @@ class DropRowError(Exception):
 
 
 def draw_latex(table, caption=None, caption_short=None, caption_above=False, label=None, drop_columns=None,
-               drop_rows=None, position=None, use_booktabs=False):
+               drop_rows=None, position=None, use_booktabs=False, multicolumn_header=None):
     """
     Draw a Texttable table in Latex format.
     Aside from table, all arguments are optional.
@@ -38,6 +45,10 @@ def draw_latex(table, caption=None, caption_short=None, caption_above=False, lab
             This overrides the border, vertical lines, and horizontal lines.
             Note the booktabs package will need to be included in your Latex document (\\usepackage{booktabs}).
             Defaults to false.
+    :param multicolumn_header: A list of 2-tuples that defines multicolumn header names and widths.
+            An additional header row will be added above the normal header row.
+            The first entry in each 2-tuple is the header name, and the second entry is the number of columns it spans.
+            The sum of column widths should equal the number of columns (after dropping any requested columns).
 
     :return: The formatted Latex table returned as a single string.
     """
@@ -48,7 +59,7 @@ def draw_latex(table, caption=None, caption_short=None, caption_above=False, lab
         table.add_rows(rows)
 
     # Sanitise inputs
-    _sanitise_drop_columns(table._header, drop_columns)
+    _sanitise_drop_columns(table._header, drop_columns, multicolumn_header)
     _sanitise_drop_rows(len(table._rows), drop_rows)
 
     # Create and return the latex output
@@ -60,7 +71,8 @@ def draw_latex(table, caption=None, caption_short=None, caption_above=False, lab
                                 use_booktabs=use_booktabs)
     out += _draw_latex_header(table=table,
                               drop_columns=drop_columns,
-                              use_booktabs=use_booktabs)
+                              use_booktabs=use_booktabs,
+                              multicolumn_header=multicolumn_header)
     out += _draw_latex_content(table=table,
                                drop_columns=drop_columns,
                                drop_rows=drop_rows,
@@ -119,7 +131,7 @@ def _draw_latex_preamble(table, position, caption, caption_short, use_booktabs):
     return out
 
 
-def _draw_latex_header(table, drop_columns, use_booktabs):
+def _draw_latex_header(table, drop_columns, use_booktabs, multicolumn_header):
     """
     Draw the Latex header.
 
@@ -132,8 +144,10 @@ def _draw_latex_header(table, drop_columns, use_booktabs):
 
     :param table: Texttable table to be rendered in Latex.
     :param drop_columns: A list of columns that should not be in the final Latex output.
+    :param multicolumn_header: A list of 2-tuples describing multicolumn header names and their widths.
     :return: The Latex table header as a single string.
     """
+    # Top rule
     out = ""
     if table._has_border() or use_booktabs:
         rule = 'toprule' if use_booktabs else 'hline'
@@ -141,8 +155,16 @@ def _draw_latex_header(table, drop_columns, use_booktabs):
 
     # Drop header columns if required
     header = _drop_columns(table._header.copy(), table._header, drop_columns)
+
+    # Multicolumn header
+    if multicolumn_header is not None:
+        multicolumn_header_str = ["\\multicolumn{{{:d}}}{{c}}{{{:s}}}".format(c, name) for name, c in multicolumn_header]
+        out += _indent_text(" & ".join(multicolumn_header_str) + " \\\\\n", 3)
+
+    # Normal header
     out += _indent_text(" & ".join(header) + " \\\\\n", 3)
 
+    # Mid rule
     if table._has_header() or use_booktabs:
         rule = 'midrule' if use_booktabs else 'hline'
         out += _indent_text("\\{}\n".format(rule), 3)
@@ -242,20 +264,26 @@ def _clean_row(row):
     return clean_row
 
 
-def _sanitise_drop_columns(header, drop_columns):
+def _sanitise_drop_columns(header, drop_columns, multicolumn_header):
     """
     Check the columns to be dropped - each column must be in the table header.
+    If also using a multicolumn header, check the sum of column widths matches the number of columns (after dropping).
 
     :param header: Table header array.
     :param drop_columns: List of columns to be dropped.
     :return: None
     """
-    if drop_columns is None:
-        return
     # Check columns (ignores case).
-    for column in drop_columns:
-        if column.upper() not in [h.upper() for h in header]:
-            raise DropColumnError(column, header)
+    if drop_columns is not None:
+        for column in drop_columns:
+            if column.upper() not in [h.upper() for h in header]:
+                raise DropColumnError(column, header)
+    # Check multicolumn header
+    if multicolumn_header is not None:
+        n_expected_columns = len(header) if drop_columns is None else len(header) - len(drop_columns)
+        sum_multicolumn = sum([h[1] for h in multicolumn_header])
+        if n_expected_columns != sum_multicolumn:
+            raise MulticolumnHeaderError(n_expected_columns, sum_multicolumn)
 
 
 def _drop_columns(target, header, drop_columns):
