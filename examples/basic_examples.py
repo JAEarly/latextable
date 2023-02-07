@@ -14,6 +14,7 @@ def run():
     example_9()
     example_10()
     example_11()
+    example_12()
 
 
 def example_1():
@@ -183,6 +184,18 @@ def example_11():
     print('\n-- Example 11: Multicolumn header with drop column --')
     print('Latextable Output:')
     print(latextable.draw_latex(rows, use_booktabs=True, drop_columns=['C'], multicolumn_header=multicolumn_header))
+
+
+def example_12():
+    # Example 12 - Alias '&' in header and '+-' in rows
+    rows = [["A", "B", "C & D"],
+            ["a1", "b1", "c1 +- d1"],
+            ["a2", "b2", "c2 +- d2"],
+            ["a3", "b3", "c3 +- d3"]]
+    alias = {'&': '\\&', '+-': '$\\pm$'}
+    print('\n-- Example 12: Alias Test --')
+    print('Latextable Output:')
+    print(latextable.draw_latex(rows, use_booktabs=True, alias=alias))
 
 
 if __name__ == "__main__":
