@@ -21,6 +21,8 @@ The Latex output matches the table design, and there are utilities for adding ta
 - Provides the ability to add a caption, reference label, and position to the Latex output.
 - The output is correctly indented for directly copying into Latex.
 - Supports [booktabs](https://ctan.org/pkg/booktabs?lang=en) formatting.
+- Multicolumn headers can be included.
+- Table data can be aliased for Latex output (e.g., escaping characters).
 
 ## Installation
 
@@ -38,28 +40,36 @@ texttable
 
 ## Usage
 
-The single function `latextable.draw_latex` returns a formatted Latex string based on the provided table.
+The single function `latextable.draw_latex` returns a formatted Latex string based on the provided Texttable table or rows.
 Aside from table, all arguments are optional.
+Full documentation is available on [Read the Docs](https://latextable.readthedocs.io/en/stable/).
 
 ```
-draw_latex(table, caption=None, caption_short=None, caption_above=False, label=None, drop_columns=None,
-               drop_rows=None, position=None, use_booktabs=False):
-    table: Texttable table to be rendered in Latex.
+def draw_latex(table, caption=None, caption_short=None, caption_above=False, label=None, drop_columns=None,
+               drop_rows=None, position=None, use_booktabs=False, multicolumn_header=None, alias=None):
+    table: Texttable table to be rendered in Latex, or a list of rows that represents a table.
     caption: A string that adds a caption to the Latex formatting.
     caption_short: A string that adds a short caption (used in the list of tables). Ignored if caption is None.
     caption_above: If True, the caption will be added above the table rather than below it (default).
     label: A string that adds a referencing label to the Latex formatting.
     drop_columns: A list of column names that won't be in the Latex output.
-      Each column name must be in the table header.
+     Each column name must be in the table header.
     drop_rows: A list of row indices that won't be in the Latex output.
-      Each row index must be in [0, number of rows - 1], where number of rows does not include the header.
+     Each row index must be in [0, number of rows - 1], where number of rows does not include the header.
     position: A string that represents LaTex's float position of the table.
-      For example 'ht' results in the float position [ht].
+     For example 'ht' results in the float position [ht].
     use_booktabs: Whether to override the table formatting with booktabs (https://ctan.org/pkg/booktabs?lang=en).
-      If true, the texttable formatting is ignored, and instead the default booktabs style is used.
-      This overrides the border, vertical lines, and horizontal lines.
-      Note the booktabs package will need to be included in your Latex document (\\usepackage{booktabs}).
-      Defaults to false.
+     If true, the texttable formatting is ignored, and instead the default booktabs style is used.
+     This overrides the border, vertical lines, and horizontal lines.
+     Note the booktabs package will need to be included in your Latex document (\\usepackage{booktabs}).
+     Defaults to false.
+    multicolumn_header: A list of 2-tuples that defines multicolumn header names and widths.
+     An additional header row will be added above the normal header row.
+     The first entry in each 2-tuple is the header name, and the second entry is the number of columns it spans.
+     The sum of column widths should equal the number of columns (after dropping any requested columns).
+    alias: A str -> str dictionary denoting strings in the table data that should be aliased in the Latex output.
+     Useful for escaping special Latex characters (e.g. &) or inserting custom Latex.
+     For example, to replace '+-' with '$\\pm$', the dict would be {'+-': '$\\pm$'}.
 
     return: The formatted Latex table returned as a single string.
 ```
@@ -133,6 +143,14 @@ A working example is also given in this [Colab Notebook](https://colab.research.
 
 ## Release History
 
+* 1.0.0
+    * Added the ability to a list of rows rather than a Texttable object (Texttable is still a requirement).
+      Inspired by [latextable-lite](https://github.com/huisyy/latextable-lite) from [Huisyy](https://github.com/huisyy).
+    * Added support for multi-column headers.
+    * Added aliasing, where strings in the original data can be replaced before outputting to Latex (e.g., escaping characters).
+    * Added docs via Read the Docs.
+    * Updated build to pyproject.toml for PEP 621 compliance (thanks to [KOLANICH](https://github.com/KOLANICH)).
+    * Fixed bug that occurs when texttable align is not set.
 * 0.3.0
     * Added support for [short captions](https://tex.stackexchange.com/questions/11579/short-captions-for-figures-in-listoffigures)
       (thanks to [PhilW92](https://github.com/PhilW92)).
@@ -151,6 +169,8 @@ A working example is also given in this [Colab Notebook](https://colab.research.
 
 Website: [Joseph Early](https://www.jearly.co.uk/)  
 Twitter: [@JosephAEarly](https://twitter.com/JosephAEarly)  
-Email: [joseph.early.ai@gmail.com](mailto:joseph.early.ai@gmail.com)  
+Email: [joseph.early.ai@gmail.com](mailto:joseph.early.ai@gmail.com)
+
+[!["Buy Me A Coffee"](https://www.buymeacoffee.com/assets/img/custom_images/orange_img.png)](https://www.buymeacoffee.com/jearly)
 
 Distributed under the MIT license. See [LICENSE](LICENSE) for more information.

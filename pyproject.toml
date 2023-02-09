@@ -4,13 +4,13 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "latextable"
-version = "0.4.0"
+version = "1.0.0"
 authors = [{name = "Joseph Early", email = "joseph.early.ai@gmail.com"}]
 license = {text = "MIT"}
 description = "An extension to the texttable library that exports tables directly to Latex."
 keywords = ["table", "texttable", "latex"]
 classifiers = [
-    "Development Status :: 4 - Beta",
+    "Development Status :: 5 - Production/Stable",
     "License :: OSI Approved :: MIT License",
     "Programming Language :: Python :: 3",
 ]

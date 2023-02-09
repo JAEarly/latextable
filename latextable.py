@@ -4,25 +4,6 @@ Drawing functions for outputting a Texttable table in a Latex format.
 import texttable
 
 
-class DropColumnError(Exception):
-
-    def __init__(self, column, header):
-        super().__init__("Cannot drop column {:s} - column not in table header ({:s})\n".format(column, str(header)))
-
-
-class MulticolumnHeaderError(Exception):
-
-    def __init__(self, n_expected_columns, sum_multicolumn):
-        super().__init__("Mismatch between multicolumn size and number of actual columns."
-                         " Got {:d} but expected {:d}.\n".format(sum_multicolumn, n_expected_columns))
-
-
-class DropRowError(Exception):
-
-    def __init__(self, n_rows, row_idx):
-        super().__init__("Cannot drop row {:d} - row is outside the range [1,{:d}]\n".format(row_idx, n_rows))
-
-
 def draw_latex(table, caption=None, caption_short=None, caption_above=False, label=None, drop_columns=None,
                drop_rows=None, position=None, use_booktabs=False, multicolumn_header=None, alias=None):
     """
@@ -98,17 +79,45 @@ def draw_latex(table, caption=None, caption_short=None, caption_above=False, lab
     return out
 
 
+class DropColumnError(Exception):
+    """
+    Error thrown when a dropped column does not exist in the table header.
+    """
+
+    def __init__(self, column, header):
+        super().__init__("Cannot drop column {:s} - column not in table header ({:s})\n".format(column, str(header)))
+
+
+class MulticolumnHeaderError(Exception):
+    """
+    Error thrown when there is a mismatch between multicolumns and actual columns (after dropping columns).
+    """
+
+    def __init__(self, n_expected_columns, sum_multicolumn):
+        super().__init__("Mismatch between multicolumn size and number of actual columns."
+                         " Got {:d} but expected {:d}.\n".format(sum_multicolumn, n_expected_columns))
+
+
+class DropRowError(Exception):
+    """
+    Error thrown when a dropped row is outside the range of valid rows.
+    """
+
+    def __init__(self, n_rows, row_idx):
+        super().__init__("Cannot drop row {:d} - row is outside the range [1,{:d}]\n".format(row_idx, n_rows))
+
+
 def _draw_latex_preamble(table, position, caption, caption_short, use_booktabs):
     """
     Draw the Latex table preamble.
 
-    Applies column horizontal alignment
-    Applies columns vlines and table vertical border if appropriate.
+    Applies column horizontal alignment, columns vlines, and table vertical border if appropriate.
 
-    Example Output:
-        \begin{table}
-            \begin{center}
-                \begin{tabular}{|l|r|c|}
+    Example Output::
+
+        \\begin{table}
+            \\begin{center}
+                \\begin{tabular}{|l|r|c|}
 
     :param table: Texttable table to be rendered in Latex.
     :return: The Latex table preamble as a single string.
@@ -150,10 +159,11 @@ def _draw_latex_header(table, drop_columns, use_booktabs, multicolumn_header):
 
     Applies header border if appropriate.
 
-    Example Output:
-        \hline
-        Name & Age & Nickname \\
-        \hline
+    Example Output::
+
+        \\hline
+        Name & Age & Nickname \\\\
+        \\hline
 
     :param table: Texttable table to be rendered in Latex.
     :param drop_columns: A list of columns that should not be in the final Latex output.
@@ -188,12 +198,13 @@ def _draw_latex_content(table, drop_columns, drop_rows, use_booktabs):
     """
     Draw the Latex table content.
 
-    Example Output:
-        MrXavierHuon & 32 & Xav' \\
-        \hline
-        MrBaptisteClement & 1 & Baby \\
-        \hline
-        MmeLouiseBourgeau & 28 & Lou Loue \\
+    Example Output::
+
+        MrXavierHuon & 32 & Xav' \\\\
+        \\hline
+        MrBaptisteClement & 1 & Baby \\\\
+        \\hline
+        MmeLouiseBourgeau & 28 & Lou Loue \\\\
 
     :param table: Texttable table to be rendered in Latex.
     :param drop_columns: A list of columns that should not be in the final Latex output.
@@ -215,16 +226,16 @@ def _draw_latex_postamble(table, caption, caption_short, label, use_booktabs):
     """
     Draw the Latex table postamble.
 
-    Adds caption and label if given.
-    Applies table bottom border if appropriate.
+    Adds caption and label if given. Applies table bottom border if appropriate.
 
-    Example Output:
-            \hline
-            \end{tabular}
-        \end{center}
-        \caption{An example table.}
-        \label{table:example_table}
-    \end{table}
+    Example Output::
+
+            \\hline
+            \\end{tabular}
+        \\end{center}
+        \\caption{An example table.}
+        \\label{table:example_table}
+    \\end{table}
 
     :param table: Texttable table to be rendered in Latex.
     :param caption: A caption to add to the table.
@@ -255,6 +266,13 @@ def _draw_latex_postamble(table, caption, caption_short, label, use_booktabs):
 
 
 def _draw_table_caption(caption, caption_short):
+    """
+    Add a caption to the table, with an optional short version (for table of contents etc.).
+
+    :param caption: The main caption for the table.
+    :param caption_short: The short version of the caption.
+    :return: The Latex table caption as one string.
+    """
     out = ""
     if caption is not None:
         out += _indent_text("\\caption", 1)
