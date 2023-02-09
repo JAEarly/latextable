@@ -42,7 +42,7 @@ texttable
 
 The single function `latextable.draw_latex` returns a formatted Latex string based on the provided Texttable table or rows.
 Aside from table, all arguments are optional.
-Full documentation is available on [Read the Docs](https://latextable.readthedocs.io/en/stable/).
+Full documentation is available on [Read the Docs](https://latextable.readthedocs.io/en/latest/).
 
 ```
 def draw_latex(table, caption=None, caption_short=None, caption_above=False, label=None, drop_columns=None,
