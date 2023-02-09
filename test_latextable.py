@@ -14,9 +14,16 @@ class LatexTableTest(unittest.TestCase):
 
     def test_sanitise_drop_columns(self):
         header = ["Col1", "Col2", "Col3"]
-        self.assertIsNone(latextable._sanitise_drop_columns(header, ["Col1"]))
-        self.assertIsNone(latextable._sanitise_drop_columns(header, ["Col1", "Col2"]))
-        self.assertRaises(latextable.DropColumnError, latextable._sanitise_drop_columns, header, ["Col4"])
+        # Without multicolumn headers
+        self.assertIsNone(latextable._sanitise_drop_columns(header, None, None))
+        self.assertIsNone(latextable._sanitise_drop_columns(header, ["Col1"], None))
+        self.assertIsNone(latextable._sanitise_drop_columns(header, ["Col1", "Col2"], None))
+        self.assertRaises(latextable.DropColumnError, latextable._sanitise_drop_columns, header, ["Col4"], None)
+        # With multicolumn headers
+        self.assertIsNone(latextable._sanitise_drop_columns(header, None, [("All", 3)]))
+        self.assertIsNone(latextable._sanitise_drop_columns(header, ["Col1"], [("All", 2)]))
+        self.assertRaises(latextable.MulticolumnHeaderError,
+                          latextable._sanitise_drop_columns, header, ["Col1"], [("All", 3)])
 
     def test_drop_columns(self):
         target = ["Row1", "Row2", "Row3"]

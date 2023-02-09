@@ -1,27 +1,16 @@
 """
 Drawing functions for outputting a Texttable table in a Latex format.
 """
-
-
-class DropColumnError(Exception):
-
-    def __init__(self, column, header):
-        super().__init__("Cannot drop column {:s} - column not in table header ({:s})\n".format(column, str(header)))
-
-
-class DropRowError(Exception):
-
-    def __init__(self, n_rows, row_idx):
-        super().__init__("Cannot drop row {:d} - row is outside the range [1,{:d}]\n".format(row_idx, n_rows))
+import texttable
 
 
 def draw_latex(table, caption=None, caption_short=None, caption_above=False, label=None, drop_columns=None,
-               drop_rows=None, position=None, use_booktabs=False):
+               drop_rows=None, position=None, use_booktabs=False, multicolumn_header=None, alias=None):
     """
     Draw a Texttable table in Latex format.
     Aside from table, all arguments are optional.
 
-    :param table: Texttable table to be rendered in Latex.
+    :param table: Texttable table to be rendered in Latex, or a list of rows that represents a table.
     :param caption: A string that adds a caption to the Latex formatting.
     :param caption_short: A string that adds a short caption (used in the list of tables). Ignored if caption is None.
     :param caption_above: If True, the caption will be added above the table rather than below it (default).
@@ -37,11 +26,37 @@ def draw_latex(table, caption=None, caption_short=None, caption_above=False, lab
             This overrides the border, vertical lines, and horizontal lines.
             Note the booktabs package will need to be included in your Latex document (\\usepackage{booktabs}).
             Defaults to false.
+    :param multicolumn_header: A list of 2-tuples that defines multicolumn header names and widths.
+            An additional header row will be added above the normal header row.
+            The first entry in each 2-tuple is the header name, and the second entry is the number of columns it spans.
+            The sum of column widths should equal the number of columns (after dropping any requested columns).
+    :param alias: A str -> str dictionary denoting strings in the table data that should be aliased in the Latex output.
+            Useful for escaping special Latex characters (e.g. &) or inserting custom Latex.
+            For example, to replace '+-' with '$\\pm$', the dict would be {'+-': '$\\pm$'}.
 
     :return: The formatted Latex table returned as a single string.
     """
-    _sanitise_drop_columns(table._header, drop_columns)
+    # If passed a list of rows rather than a table, create the table first
+    if type(table) != texttable.Texttable:
+        rows = table
+        table = texttable.Texttable()
+        table.add_rows(rows)
+
+    # Sanitise inputs
+    _sanitise_drop_columns(table._header, drop_columns, multicolumn_header)
     _sanitise_drop_rows(len(table._rows), drop_rows)
+
+    # Apply aliases
+    if alias is not None:
+        for s_src, s_dst in alias.items():
+            # Apply to header
+            table._header = [h.replace(s_src, s_dst) for h in table._header]
+            # Apply to rows
+            for r_idx, row in enumerate(table._rows):
+                # Apply to header
+                table._rows[r_idx] = [r.replace(s_src, s_dst) for r in table._rows[r_idx]]
+
+    # Create and return the latex output
     out = ""
     out += _draw_latex_preamble(table=table,
                                 position=position,
@@ -50,7 +65,8 @@ def draw_latex(table, caption=None, caption_short=None, caption_above=False, lab
                                 use_booktabs=use_booktabs)
     out += _draw_latex_header(table=table,
                               drop_columns=drop_columns,
-                              use_booktabs=use_booktabs)
+                              use_booktabs=use_booktabs,
+                              multicolumn_header=multicolumn_header)
     out += _draw_latex_content(table=table,
                                drop_columns=drop_columns,
                                drop_rows=drop_rows,
@@ -63,17 +79,45 @@ def draw_latex(table, caption=None, caption_short=None, caption_above=False, lab
     return out
 
 
+class DropColumnError(Exception):
+    """
+    Error thrown when a dropped column does not exist in the table header.
+    """
+
+    def __init__(self, column, header):
+        super().__init__("Cannot drop column {:s} - column not in table header ({:s})\n".format(column, str(header)))
+
+
+class MulticolumnHeaderError(Exception):
+    """
+    Error thrown when there is a mismatch between multicolumns and actual columns (after dropping columns).
+    """
+
+    def __init__(self, n_expected_columns, sum_multicolumn):
+        super().__init__("Mismatch between multicolumn size and number of actual columns."
+                         " Got {:d} but expected {:d}.\n".format(sum_multicolumn, n_expected_columns))
+
+
+class DropRowError(Exception):
+    """
+    Error thrown when a dropped row is outside the range of valid rows.
+    """
+
+    def __init__(self, n_rows, row_idx):
+        super().__init__("Cannot drop row {:d} - row is outside the range [1,{:d}]\n".format(row_idx, n_rows))
+
+
 def _draw_latex_preamble(table, position, caption, caption_short, use_booktabs):
     """
     Draw the Latex table preamble.
 
-    Applies column horizontal alignment
-    Applies columns vlines and table vertical border if appropriate.
+    Applies column horizontal alignment, columns vlines, and table vertical border if appropriate.
 
-    Example Output:
-        \begin{table}
-            \begin{center}
-                \begin{tabular}{|l|r|c|}
+    Example Output::
+
+        \\begin{table}
+            \\begin{center}
+                \\begin{tabular}{|l|r|c|}
 
     :param table: Texttable table to be rendered in Latex.
     :return: The Latex table preamble as a single string.
@@ -91,6 +135,9 @@ def _draw_latex_preamble(table, position, caption, caption_short, use_booktabs):
     out += _indent_text("\\begin{center}\n", 1)
 
     # Column setup with/without vlines
+    #  If texttable align not set, default to left alignment (as per texttable)
+    if not hasattr(table, "_align"):
+        table._align = ["l"] * table._row_size
     if table._has_vlines() and not use_booktabs:
         column_str = "|".join(table._align)
     else:
@@ -106,21 +153,24 @@ def _draw_latex_preamble(table, position, caption, caption_short, use_booktabs):
     return out
 
 
-def _draw_latex_header(table, drop_columns, use_booktabs):
+def _draw_latex_header(table, drop_columns, use_booktabs, multicolumn_header):
     """
     Draw the Latex header.
 
     Applies header border if appropriate.
 
-    Example Output:
-        \hline
-        Name & Age & Nickname \\
-        \hline
+    Example Output::
+
+        \\hline
+        Name & Age & Nickname \\\\
+        \\hline
 
     :param table: Texttable table to be rendered in Latex.
     :param drop_columns: A list of columns that should not be in the final Latex output.
+    :param multicolumn_header: A list of 2-tuples describing multicolumn header names and their widths.
     :return: The Latex table header as a single string.
     """
+    # Top rule
     out = ""
     if table._has_border() or use_booktabs:
         rule = 'toprule' if use_booktabs else 'hline'
@@ -128,8 +178,16 @@ def _draw_latex_header(table, drop_columns, use_booktabs):
 
     # Drop header columns if required
     header = _drop_columns(table._header.copy(), table._header, drop_columns)
+
+    # Multicolumn header
+    if multicolumn_header is not None:
+        multicolumn_header_str = ["\\multicolumn{{{:d}}}{{c}}{{{:s}}}".format(c, name) for name, c in multicolumn_header]
+        out += _indent_text(" & ".join(multicolumn_header_str) + " \\\\\n", 3)
+
+    # Normal header
     out += _indent_text(" & ".join(header) + " \\\\\n", 3)
 
+    # Mid rule
     if table._has_header() or use_booktabs:
         rule = 'midrule' if use_booktabs else 'hline'
         out += _indent_text("\\{}\n".format(rule), 3)
@@ -140,12 +198,13 @@ def _draw_latex_content(table, drop_columns, drop_rows, use_booktabs):
     """
     Draw the Latex table content.
 
-    Example Output:
-        MrXavierHuon & 32 & Xav' \\
-        \hline
-        MrBaptisteClement & 1 & Baby \\
-        \hline
-        MmeLouiseBourgeau & 28 & Lou Loue \\
+    Example Output::
+
+        MrXavierHuon & 32 & Xav' \\\\
+        \\hline
+        MrBaptisteClement & 1 & Baby \\\\
+        \\hline
+        MmeLouiseBourgeau & 28 & Lou Loue \\\\
 
     :param table: Texttable table to be rendered in Latex.
     :param drop_columns: A list of columns that should not be in the final Latex output.
@@ -167,16 +226,16 @@ def _draw_latex_postamble(table, caption, caption_short, label, use_booktabs):
     """
     Draw the Latex table postamble.
 
-    Adds caption and label if given.
-    Applies table bottom border if appropriate.
+    Adds caption and label if given. Applies table bottom border if appropriate.
 
-    Example Output:
-            \hline
-            \end{tabular}
-        \end{center}
-        \caption{An example table.}
-        \label{table:example_table}
-    \end{table}
+    Example Output::
+
+            \\hline
+            \\end{tabular}
+        \\end{center}
+        \\caption{An example table.}
+        \\label{table:example_table}
+    \\end{table}
 
     :param table: Texttable table to be rendered in Latex.
     :param caption: A caption to add to the table.
@@ -207,6 +266,13 @@ def _draw_latex_postamble(table, caption, caption_short, label, use_booktabs):
 
 
 def _draw_table_caption(caption, caption_short):
+    """
+    Add a caption to the table, with an optional short version (for table of contents etc.).
+
+    :param caption: The main caption for the table.
+    :param caption_short: The short version of the caption.
+    :return: The Latex table caption as one string.
+    """
     out = ""
     if caption is not None:
         out += _indent_text("\\caption", 1)
@@ -229,20 +295,26 @@ def _clean_row(row):
     return clean_row
 
 
-def _sanitise_drop_columns(header, drop_columns):
+def _sanitise_drop_columns(header, drop_columns, multicolumn_header):
     """
     Check the columns to be dropped - each column must be in the table header.
+    If also using a multicolumn header, check the sum of column widths matches the number of columns (after dropping).
 
     :param header: Table header array.
     :param drop_columns: List of columns to be dropped.
     :return: None
     """
-    if drop_columns is None:
-        return
     # Check columns (ignores case).
-    for column in drop_columns:
-        if column.upper() not in [h.upper() for h in header]:
-            raise DropColumnError(column, header)
+    if drop_columns is not None:
+        for column in drop_columns:
+            if column.upper() not in [h.upper() for h in header]:
+                raise DropColumnError(column, header)
+    # Check multicolumn header
+    if multicolumn_header is not None:
+        n_expected_columns = len(header) if drop_columns is None else len(header) - len(drop_columns)
+        sum_multicolumn = sum([h[1] for h in multicolumn_header])
+        if n_expected_columns != sum_multicolumn:
+            raise MulticolumnHeaderError(n_expected_columns, sum_multicolumn)
 
 
 def _drop_columns(target, header, drop_columns):

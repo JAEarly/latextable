@@ -10,6 +10,11 @@ def run():
     example_5()
     example_6()
     example_7()
+    example_8()
+    example_9()
+    example_10()
+    example_11()
+    example_12()
 
 
 def example_1():
@@ -130,6 +135,67 @@ def example_7():
     print('\nLatextable Output:')
     print(latextable.draw_latex(table_7, caption="This caption is above the table!", label="table:caption_above",
                                 caption_above=True))
+
+
+def example_8():
+    # Example 8 - Test with no align
+    table_8 = Texttable()
+    table_8.add_rows([["A", "B", "C"],
+                     ["a1", "b1", "c1"],
+                     ["a2", "b2", "c2"],
+                     ["a3", "b3", "c3"]])
+    print('\n-- Example 8: Without texttable align --')
+    print('Texttable Output:')
+    print(table_8.draw())
+    print('\nLatextable Output:')
+    print(latextable.draw_latex(table_8, use_booktabs=True))
+
+
+def example_9():
+    # Example 9 - Test without using texttable
+    rows = [["A", "B", "C"],
+            ["a1", "b1", "c1"],
+            ["a2", "b2", "c2"],
+            ["a3", "b3", "c3"]]
+    print('\n-- Example 9: Without using texttable table --')
+    print('Latextable Output:')
+    print(latextable.draw_latex(rows, use_booktabs=True))
+
+
+def example_10():
+    # Example 10 - Multicolumn header
+    rows = [["R", "A", "B", "C", "D"],
+            ["1", "a1", "b1", "c1", "d1"],
+            ["2", "a2", "b2", "c2", "d2"],
+            ["3", "a3", "b3", "c3", "d3"]]
+    multicolumn_header = [("", 1), ("AB", 2), ("CD", 2)]
+    print('\n-- Example 10: Multicolumn header --')
+    print('Latextable Output:')
+    print(latextable.draw_latex(rows, use_booktabs=True, multicolumn_header=multicolumn_header))
+
+
+def example_11():
+    # Example 11 - Multicolumn header with drop column
+    rows = [["R", "A", "B", "C", "D"],
+            ["1", "a1", "b1", "c1", "d1"],
+            ["2", "a2", "b2", "c2", "d2"],
+            ["3", "a3", "b3", "c3", "d3"]]
+    multicolumn_header = [("", 1), ("AB", 2), ("", 1)]
+    print('\n-- Example 11: Multicolumn header with drop column --')
+    print('Latextable Output:')
+    print(latextable.draw_latex(rows, use_booktabs=True, drop_columns=['C'], multicolumn_header=multicolumn_header))
+
+
+def example_12():
+    # Example 12 - Alias '&' in header and '+-' in rows
+    rows = [["A", "B", "C & D"],
+            ["a1", "b1", "c1 +- d1"],
+            ["a2", "b2", "c2 +- d2"],
+            ["a3", "b3", "c3 +- d3"]]
+    alias = {'&': '\\&', '+-': '$\\pm$'}
+    print('\n-- Example 12: Alias Test --')
+    print('Latextable Output:')
+    print(latextable.draw_latex(rows, use_booktabs=True, alias=alias))
 
 
 if __name__ == "__main__":

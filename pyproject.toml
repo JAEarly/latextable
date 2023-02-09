@@ -1,0 +1,27 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "latextable"
+version = "1.0.0"
+authors = [{name = "Joseph Early", email = "joseph.early.ai@gmail.com"}]
+license = {text = "MIT"}
+description = "An extension to the texttable library that exports tables directly to Latex."
+keywords = ["table", "texttable", "latex"]
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+]
+urls = {Homepage = "https://github.com/JAEarly/latextable"}
+requires-python = ">=3.7"
+dependencies = ["texttable"]
+
+[project.readme]
+file = "README.md"
+content-type = "text/markdown"
+
+[tool.setuptools]
+py-modules = ["latextable"]
+include-package-data = false

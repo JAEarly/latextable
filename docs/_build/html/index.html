@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>latextable documentation &mdash; latextable 2023 documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/sphinx_highlight.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="#" class="icon icon-home"> latextable
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <!-- Local TOC -->
+              <div class="local-toc"><ul>
+<li><a class="reference internal" href="#">latextable documentation</a><ul>
+<li><a class="reference internal" href="#latextable.draw_latex"><code class="docutils literal notranslate"><span class="pre">draw_latex()</span></code></a></li>
+<li><a class="reference internal" href="#latextable.DropColumnError"><code class="docutils literal notranslate"><span class="pre">DropColumnError</span></code></a></li>
+<li><a class="reference internal" href="#latextable.MulticolumnHeaderError"><code class="docutils literal notranslate"><span class="pre">MulticolumnHeaderError</span></code></a></li>
+<li><a class="reference internal" href="#latextable.DropRowError"><code class="docutils literal notranslate"><span class="pre">DropRowError</span></code></a></li>
+<li><a class="reference internal" href="#latextable._draw_latex_preamble"><code class="docutils literal notranslate"><span class="pre">_draw_latex_preamble()</span></code></a></li>
+<li><a class="reference internal" href="#latextable._draw_latex_header"><code class="docutils literal notranslate"><span class="pre">_draw_latex_header()</span></code></a></li>
+<li><a class="reference internal" href="#latextable._draw_latex_content"><code class="docutils literal notranslate"><span class="pre">_draw_latex_content()</span></code></a></li>
+<li><a class="reference internal" href="#latextable._draw_latex_postamble"><code class="docutils literal notranslate"><span class="pre">_draw_latex_postamble()</span></code></a></li>
+<li><a class="reference internal" href="#latextable._draw_table_caption"><code class="docutils literal notranslate"><span class="pre">_draw_table_caption()</span></code></a></li>
+<li><a class="reference internal" href="#latextable._clean_row"><code class="docutils literal notranslate"><span class="pre">_clean_row()</span></code></a></li>
+<li><a class="reference internal" href="#latextable._sanitise_drop_columns"><code class="docutils literal notranslate"><span class="pre">_sanitise_drop_columns()</span></code></a></li>
+<li><a class="reference internal" href="#latextable._drop_columns"><code class="docutils literal notranslate"><span class="pre">_drop_columns()</span></code></a></li>
+<li><a class="reference internal" href="#latextable._sanitise_drop_rows"><code class="docutils literal notranslate"><span class="pre">_sanitise_drop_rows()</span></code></a></li>
+<li><a class="reference internal" href="#latextable._drop_rows"><code class="docutils literal notranslate"><span class="pre">_drop_rows()</span></code></a></li>
+<li><a class="reference internal" href="#latextable._indent_text"><code class="docutils literal notranslate"><span class="pre">_indent_text()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</div>
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="#">latextable</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="#" class="icon icon-home"></a></li>
+      <li class="breadcrumb-item active">latextable documentation</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/index.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-latextable">
+<span id="latextable-documentation"></span><h1>latextable documentation<a class="headerlink" href="#module-latextable" title="Permalink to this heading"></a></h1>
+<p>Drawing functions for outputting a Texttable table in a Latex format.</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="latextable.draw_latex">
+<span class="sig-prename descclassname"><span class="pre">latextable.</span></span><span class="sig-name descname"><span class="pre">draw_latex</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">table</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">caption</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">caption_short</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">caption_above</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">label</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">drop_columns</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">drop_rows</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">position</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_booktabs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">multicolumn_header</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alias</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#latextable.draw_latex" title="Permalink to this definition"></a></dt>
+<dd><p>Draw a Texttable table in Latex format.
+Aside from table, all arguments are optional.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>table</strong> – Texttable table to be rendered in Latex, or a list of rows that represents a table.</p></li>
+<li><p><strong>caption</strong> – A string that adds a caption to the Latex formatting.</p></li>
+<li><p><strong>caption_short</strong> – A string that adds a short caption (used in the list of tables). Ignored if caption is None.</p></li>
+<li><p><strong>caption_above</strong> – If True, the caption will be added above the table rather than below it (default).</p></li>
+<li><p><strong>label</strong> – A string that adds a referencing label to the Latex formatting.</p></li>
+<li><p><strong>drop_columns</strong> – A list of column names that won’t be in the Latex output.
+Each column name must be in the table header.</p></li>
+<li><p><strong>drop_rows</strong> – A list of row indices that won’t be in the Latex output.
+Each row index must be in [0, number of rows - 1], where number of rows does not include the header.</p></li>
+<li><p><strong>position</strong> – A string that represents LaTex’s float position of the table.
+For example ‘ht’ results in the float position [ht].</p></li>
+<li><p><strong>use_booktabs</strong> – Whether to override the table formatting with booktabs (<a class="reference external" href="https://ctan.org/pkg/booktabs?lang=en">https://ctan.org/pkg/booktabs?lang=en</a>).
+If true, the texttable formatting is ignored, and instead the default booktabs style is used.
+This overrides the border, vertical lines, and horizontal lines.
+Note the booktabs package will need to be included in your Latex document (usepackage{booktabs}).
+Defaults to false.</p></li>
+<li><p><strong>multicolumn_header</strong> – A list of 2-tuples that defines multicolumn header names and widths.
+An additional header row will be added above the normal header row.
+The first entry in each 2-tuple is the header name, and the second entry is the number of columns it spans.
+The sum of column widths should equal the number of columns (after dropping any requested columns).</p></li>
+<li><p><strong>alias</strong> – A str -&gt; str dictionary denoting strings in the table data that should be aliased in the Latex output.
+Useful for escaping special Latex characters (e.g. &amp;) or inserting custom Latex.
+For example, to replace ‘+-’ with ‘$pm$’, the dict would be {‘+-’: ‘$pm$’}.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The formatted Latex table returned as a single string.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="latextable.DropColumnError">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">latextable.</span></span><span class="sig-name descname"><span class="pre">DropColumnError</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">column</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">header</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#latextable.DropColumnError" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></p>
+<p>Error thrown when a dropped column does not exist in the table header.</p>
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="latextable.MulticolumnHeaderError">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">latextable.</span></span><span class="sig-name descname"><span class="pre">MulticolumnHeaderError</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n_expected_columns</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sum_multicolumn</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#latextable.MulticolumnHeaderError" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></p>
+<p>Error thrown when there is a mismatch between multicolumns and actual columns (after dropping columns).</p>
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="latextable.DropRowError">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">latextable.</span></span><span class="sig-name descname"><span class="pre">DropRowError</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n_rows</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">row_idx</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#latextable.DropRowError" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></p>
+<p>Error thrown when a dropped row is outside the range of valid rows.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="latextable._draw_latex_preamble">
+<span class="sig-prename descclassname"><span class="pre">latextable.</span></span><span class="sig-name descname"><span class="pre">_draw_latex_preamble</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">table</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">position</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">caption</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">caption_short</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_booktabs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#latextable._draw_latex_preamble" title="Permalink to this definition"></a></dt>
+<dd><p>Draw the Latex table preamble.</p>
+<p>Applies column horizontal alignment, columns vlines, and table vertical border if appropriate.</p>
+<p>Example Output:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>\<span class="n">begin</span><span class="p">{</span><span class="n">table</span><span class="p">}</span>
+    \<span class="n">begin</span><span class="p">{</span><span class="n">center</span><span class="p">}</span>
+        \<span class="n">begin</span><span class="p">{</span><span class="n">tabular</span><span class="p">}{</span><span class="o">|</span><span class="n">l</span><span class="o">|</span><span class="n">r</span><span class="o">|</span><span class="n">c</span><span class="o">|</span><span class="p">}</span>
+</pre></div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple"><li><p><strong>table</strong> – Texttable table to be rendered in Latex.</p></li></ul></dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The Latex table preamble as a single string.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="latextable._draw_latex_header">
+<span class="sig-prename descclassname"><span class="pre">latextable.</span></span><span class="sig-name descname"><span class="pre">_draw_latex_header</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">table</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">drop_columns</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_booktabs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">multicolumn_header</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#latextable._draw_latex_header" title="Permalink to this definition"></a></dt>
+<dd><p>Draw the Latex header.</p>
+<p>Applies header border if appropriate.</p>
+<p>Example Output:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>\<span class="n">hline</span>
+<span class="n">Name</span> <span class="o">&amp;</span> <span class="n">Age</span> <span class="o">&amp;</span> <span class="n">Nickname</span> \\
+\<span class="n">hline</span>
+</pre></div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>table</strong> – Texttable table to be rendered in Latex.</p></li>
+<li><p><strong>drop_columns</strong> – A list of columns that should not be in the final Latex output.</p></li>
+<li><p><strong>multicolumn_header</strong> – A list of 2-tuples describing multicolumn header names and their widths.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The Latex table header as a single string.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="latextable._draw_latex_content">
+<span class="sig-prename descclassname"><span class="pre">latextable.</span></span><span class="sig-name descname"><span class="pre">_draw_latex_content</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">table</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">drop_columns</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">drop_rows</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_booktabs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#latextable._draw_latex_content" title="Permalink to this definition"></a></dt>
+<dd><p>Draw the Latex table content.</p>
+<p>Example Output:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">MrXavierHuon</span> <span class="o">&amp;</span> <span class="mi">32</span> <span class="o">&amp;</span> <span class="n">Xav</span><span class="s1">&#39; </span><span class="se">\\</span>
+\<span class="n">hline</span>
+<span class="n">MrBaptisteClement</span> <span class="o">&amp;</span> <span class="mi">1</span> <span class="o">&amp;</span> <span class="n">Baby</span> \\
+\<span class="n">hline</span>
+<span class="n">MmeLouiseBourgeau</span> <span class="o">&amp;</span> <span class="mi">28</span> <span class="o">&amp;</span> <span class="n">Lou</span> <span class="n">Loue</span> \\
+</pre></div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>table</strong> – Texttable table to be rendered in Latex.</p></li>
+<li><p><strong>drop_columns</strong> – A list of columns that should not be in the final Latex output.</p></li>
+<li><p><strong>drop_columns</strong> – A list of row indices that should not be in the final Latex output.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The Latex table content as a single string.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="latextable._draw_latex_postamble">
+<span class="sig-prename descclassname"><span class="pre">latextable.</span></span><span class="sig-name descname"><span class="pre">_draw_latex_postamble</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">table</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">caption</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">caption_short</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">label</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_booktabs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#latextable._draw_latex_postamble" title="Permalink to this definition"></a></dt>
+<dd><p>Draw the Latex table postamble.</p>
+<p>Adds caption and label if given. Applies table bottom border if appropriate.</p>
+<p>Example Output:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>    \<span class="n">hline</span>
+    \<span class="n">end</span><span class="p">{</span><span class="n">tabular</span><span class="p">}</span>
+\<span class="n">end</span><span class="p">{</span><span class="n">center</span><span class="p">}</span>
+\<span class="n">caption</span><span class="p">{</span><span class="n">An</span> <span class="n">example</span> <span class="n">table</span><span class="o">.</span><span class="p">}</span>
+\<span class="n">label</span><span class="p">{</span><span class="n">table</span><span class="p">:</span><span class="n">example_table</span><span class="p">}</span>
+</pre></div>
+</div>
+<p>end{table}</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>table</strong> – Texttable table to be rendered in Latex.</p></li>
+<li><p><strong>caption</strong> – A caption to add to the table.</p></li>
+<li><p><strong>caption_short</strong> – Short caption used in the list of tables. Ignored if caption is None.</p></li>
+<li><p><strong>label</strong> – A label to add to the table.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The Latex table postamble as one string.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="latextable._draw_table_caption">
+<span class="sig-prename descclassname"><span class="pre">latextable.</span></span><span class="sig-name descname"><span class="pre">_draw_table_caption</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">caption</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">caption_short</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#latextable._draw_table_caption" title="Permalink to this definition"></a></dt>
+<dd><p>Add a caption to the table, with an optional short version (for table of contents etc.).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>caption</strong> – The main caption for the table.</p></li>
+<li><p><strong>caption_short</strong> – The short version of the caption.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The Latex table caption as one string.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="latextable._clean_row">
+<span class="sig-prename descclassname"><span class="pre">latextable.</span></span><span class="sig-name descname"><span class="pre">_clean_row</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">row</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#latextable._clean_row" title="Permalink to this definition"></a></dt>
+<dd><p>Clean a row prior to drawing. Currently just removes newlines.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple"><li><p><strong>row</strong> – Row to clean.</p></li></ul></dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Cleaned row.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="latextable._sanitise_drop_columns">
+<span class="sig-prename descclassname"><span class="pre">latextable.</span></span><span class="sig-name descname"><span class="pre">_sanitise_drop_columns</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">header</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">drop_columns</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">multicolumn_header</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#latextable._sanitise_drop_columns" title="Permalink to this definition"></a></dt>
+<dd><p>Check the columns to be dropped - each column must be in the table header.
+If also using a multicolumn header, check the sum of column widths matches the number of columns (after dropping).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>header</strong> – Table header array.</p></li>
+<li><p><strong>drop_columns</strong> – List of columns to be dropped.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="latextable._drop_columns">
+<span class="sig-prename descclassname"><span class="pre">latextable.</span></span><span class="sig-name descname"><span class="pre">_drop_columns</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">target</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">header</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">drop_columns</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#latextable._drop_columns" title="Permalink to this definition"></a></dt>
+<dd><p>Drop columns from a target array.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>target</strong> – Array from which the columns should be dropped.</p></li>
+<li><p><strong>header</strong> – Table header array.</p></li>
+<li><p><strong>drop_columns</strong> – The columns that should be dropped. Each column should be in the header.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The target array with the relevant columns dropped.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="latextable._sanitise_drop_rows">
+<span class="sig-prename descclassname"><span class="pre">latextable.</span></span><span class="sig-name descname"><span class="pre">_sanitise_drop_rows</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n_rows</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">drop_rows</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#latextable._sanitise_drop_rows" title="Permalink to this definition"></a></dt>
+<dd><p>Check the rows to be dropped - 0 &lt;= row_idx &lt; n_rows for each row_idx to be dropped.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>drop_rows</strong> – List of rows to be dropped.</p></li>
+<li><p><strong>n_rows</strong> – Number of rows in the table (excluding the header).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="latextable._drop_rows">
+<span class="sig-prename descclassname"><span class="pre">latextable.</span></span><span class="sig-name descname"><span class="pre">_drop_rows</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rows</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">drop_rows</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#latextable._drop_rows" title="Permalink to this definition"></a></dt>
+<dd><p>Drop rows by their indices.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>rows</strong> – Table from which the rows should be dropped.</p></li>
+<li><p><strong>drop_rows</strong> – List of rows to be dropped.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The target array with the relevant rows dropped.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="latextable._indent_text">
+<span class="sig-prename descclassname"><span class="pre">latextable.</span></span><span class="sig-name descname"><span class="pre">_indent_text</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">text</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">indent</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#latextable._indent_text" title="Permalink to this definition"></a></dt>
+<dd><p>Indent a string by a certain number of tabs.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>text</strong> – String to indent.</p></li>
+<li><p><strong>indent</strong> – Number of tabs.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The indented string.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, Joseph Early.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

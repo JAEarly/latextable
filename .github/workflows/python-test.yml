@@ -9,7 +9,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python: ['3.x', '3.6', '3.7', '3.8', '3.9']
+        python: ['3.x', '3.7', '3.8', '3.9', '3.10', '3.11']
         os: ['ubuntu-latest']
     steps:
       - uses: actions/checkout@master
@@ -18,7 +18,11 @@ jobs:
         with:
           python-version: ${{ matrix.python }}
           architecture: x64
-      - name: Pip install
+      - name: Pip install basic
+        run: pip install --upgrade pip build setuptools wheel
+      - name: Pip install requirements
         run: pip install -r requirements.txt
+      - name: build package
+        run: python3 -m build -nwx .
       - name: Run tests
         run: python -m unittest
