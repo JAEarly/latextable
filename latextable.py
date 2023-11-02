@@ -181,14 +181,14 @@ def _draw_latex_header(table, drop_columns, use_booktabs, multicolumn_header):
 
     # Multicolumn header
     if multicolumn_header is not None:
-        multicolumn_header_str = ["\\multicolumn{{{:d}}}{{c}}{{{:s}}}".format(c, name) for name, c in multicolumn_header]
+        multicolumn_header_str = [f"\\multicolumn{{count}}{'{|c|}' if idx == 1 else '{c|}'}{{}}".format(count, name)for idx, (name, count) in enumerate(multicolumn_header)]
         out += _indent_text(" & ".join(multicolumn_header_str) + " \\\\\n", 3)
 
     # Normal header
     out += _indent_text(" & ".join(header) + " \\\\\n", 3)
 
     # Mid rule
-    if table._has_header() or use_booktabs:
+    if table._has_header() or mulicolumn_header is not None or use_booktabs:
         rule = 'midrule' if use_booktabs else 'hline'
         out += _indent_text("\\{}\n".format(rule), 3)
     return out
