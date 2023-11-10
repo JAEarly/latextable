@@ -15,6 +15,7 @@ def run():
     example_10()
     example_11()
     example_12()
+    example_13()
 
 
 def example_1():
@@ -196,6 +197,23 @@ def example_12():
     print('\n-- Example 12: Alias Test --')
     print('Latextable Output:')
     print(latextable.draw_latex(rows, use_booktabs=True, alias=alias))
+
+
+def example_13():
+    # Example 13 - Multicolumn header with vertical and horizontal lines
+    rows = [["R", "A", "B", "C", "D"],
+            ["1", "a1", "b1", "c1", "d1"],
+            ["2", "a2", "b2", "c2", "d2"],
+            ["3", "a3", "b3", "c3", "d3"]]
+    multicolumn_header = [("", 1), ("AB", 2), ("CD", 2)]
+
+    table_13 = Texttable()
+    table_13.add_rows(rows)
+    print('\n-- Example 13: Multicolumn header with vertical and horizontal lines --')
+    print('Texttable Output:')
+    print(table_13.draw())
+    print('Latextable Output:')
+    print(latextable.draw_latex(table_13, multicolumn_header=multicolumn_header))
 
 
 if __name__ == "__main__":
