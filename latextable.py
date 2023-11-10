@@ -181,8 +181,9 @@ def _draw_latex_header(table, drop_columns, use_booktabs, multicolumn_header):
 
     # Multicolumn header
     if multicolumn_header is not None:
-        multicolumn_header_str = ["\\multicolumn{{{:d}}}{{c}}{{{:s}}}".format(c, name) for name, c in multicolumn_header]
+        multicolumn_header_str = [f"\\multicolumn{{{count}}}{'{|c|}' if idx == 0 else '{c|}'}{{{name}}}" for idx, (name, count) in enumerate(multicolumn_header)]
         out += _indent_text(" & ".join(multicolumn_header_str) + " \\\\\n", 3)
+        out += _indent_text("\\{}\n".format(rule), 3)
 
     # Normal header
     out += _indent_text(" & ".join(header) + " \\\\\n", 3)
