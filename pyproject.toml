@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "latextable"
-version = "1.0.0"
+version = "1.0.1"
 authors = [{name = "Joseph Early", email = "joseph.early.ai@gmail.com"}]
 license = {text = "MIT"}
 description = "An extension to the texttable library that exports tables directly to Latex."

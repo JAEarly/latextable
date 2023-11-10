@@ -143,6 +143,8 @@ A working example is also given in this [Colab Notebook](https://colab.research.
 
 ## Release History
 
+* 1.0.1
+    * Fixed bug with multicolumn headers missing horizontal and vertical lines. Thanks to [electricbrass](https://github.com/electricbrass).   
 * 1.0.0
     * Added the ability to a list of rows rather than a Texttable object (Texttable is still a requirement).
       Inspired by [latextable-lite](https://github.com/huisyy/latextable-lite) from [Huisyy](https://github.com/huisyy).
